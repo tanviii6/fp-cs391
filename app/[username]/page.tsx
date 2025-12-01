@@ -5,11 +5,17 @@ import { User as DefaultUser } from "lucide-react";
 import Image from "next/image";
 
 // this page was styled after the official letterboxd profile page
-export default function ProfilePage() {
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+
+  // hardcoded user data for now until we have auth
   const TestUser: User = {
-    avatar:
-      "https://85ucf0l0o5.ufs.sh/f/mwJbGnaFaJcudZyEH0ei1ZSrfHMVa9dPn86mXvT4hx3gwi50",
     name: "Christian Gonzalez",
+    username: "christian",
     email: "christian.gonzalez6137@gmail.com",
     createdAt: new Date(),
   };
@@ -40,7 +46,7 @@ export default function ProfilePage() {
 
         <div className="flex flex-col gap-2">
           <h1 className="text-[22px] font-bold text-[#FFF] tracking-wide">
-            {TestUser.name}
+            {username}
           </h1>
         </div>
 
@@ -62,7 +68,7 @@ export default function ProfilePage() {
             </span>
           </div>
         </div>
-        <ProfileNav />
+        <ProfileNav user={TestUser} isProfileRoot={true} />
       </div>
       <ProfileContent />
     </div>

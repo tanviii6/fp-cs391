@@ -5,11 +5,12 @@ export interface User extends Document {
   avatar?: string;
   bio?: string;
   name: string;
+  username: string;
   email: string;
   createdAt: Date;
 }
 
-export interface Movie extends Document {
+export interface Film extends Document {
   _id?: ObjectId;
   tmdbId?: number;
   title: string;
@@ -26,7 +27,7 @@ export interface Movie extends Document {
 export interface Watched extends Document {
   _id?: ObjectId;
   userId: ObjectId;
-  movieId: ObjectId;
+  filmId: ObjectId;
   watchedDate: Date;
   rating?: number | null; // 0-5 or null
   isFavorite: boolean;
@@ -36,7 +37,7 @@ export interface Watched extends Document {
 export interface Like extends Document {
   _id?: ObjectId;
   userId: ObjectId;
-  movieId: ObjectId;
+  filmId: ObjectId;
   createdAt: Date;
 }
 
@@ -53,7 +54,7 @@ export interface List extends Document {
 
 export interface Collections {
   USERS_COLLECTION: Collection<User>;
-  MOVIES_COLLECTION: Collection<Movie>;
+  FILMS_COLLECTION: Collection<Film>;
   WATCHED_COLLECTION: Collection<Watched>;
   LIST_COLLECTION: Collection<List>;
   LIKES_COLLECTION: Collection<Like>;

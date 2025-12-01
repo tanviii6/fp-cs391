@@ -1,5 +1,5 @@
 import { MongoClient, Db, Collection } from "mongodb";
-import { User, Movie, Watched, Like, List, Collections } from "@/types/schemas";
+import { User, Film, Watched, Like, List, Collections } from "@/types/schemas";
 
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
@@ -36,8 +36,8 @@ export async function getUsersCollection(): Promise<Collection<User>> {
   return getCollection("USERS_COLLECTION");
 }
 
-export async function getMoviesCollection(): Promise<Collection<Movie>> {
-  return getCollection("MOVIES_COLLECTION");
+export async function getFilmsCollection(): Promise<Collection<Film>> {
+  return getCollection("FILMS_COLLECTION");
 }
 
 export async function getWatchedCollection(): Promise<Collection<Watched>> {

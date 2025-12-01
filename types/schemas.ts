@@ -29,8 +29,7 @@ export interface Watched extends Document {
   movieId: ObjectId;
   watchedDate: Date;
   rating?: number | null; // 0-5 or null
-  reviewText?: string;
-  isRewatch: boolean;
+  isFavorite: boolean;
   loggedAt: Date;
 }
 

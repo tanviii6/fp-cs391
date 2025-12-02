@@ -47,7 +47,6 @@ export interface List extends Document {
   title: string;
   description?: string;
   movies: ObjectId[];
-  isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

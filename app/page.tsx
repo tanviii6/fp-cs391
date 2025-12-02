@@ -1,4 +1,5 @@
 import MovieCard from "@/components/home/MovieCard";
+import { Film } from "@/types/schemas";
 
 export default async function Home() {
   let movies = [];
@@ -9,9 +10,9 @@ export default async function Home() {
     if (!apiKey) {
       console.error("API key is not set");
       return (
-          <text className="text-red-500 text-lg font-semibold">
-            Error: API is not configured.
-          </text>
+        <text className="text-red-500 text-lg font-semibold">
+          Error: API is not configured.
+        </text>
       );
     }
 
@@ -20,7 +21,7 @@ export default async function Home() {
 
     const res = await fetch(url, {
       headers: {
-      Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       next: { revalidate: 3667 },
     });
@@ -41,7 +42,7 @@ export default async function Home() {
       {movies.length === 0 ? (
         <p className="text-white">No movies found.</p>
       ) : (
-        movies.map((movie: any) => (
+        movies.map((movie: Film) => (
           <MovieCard
             key={movie.id}
             id={movie.id}

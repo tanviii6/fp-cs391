@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
 interface LikedOnlySwitchProps {
   onToggle?: (checked: boolean) => void;
   className?: string;
+  checked?: boolean;
 }
 
-export function LikedOnlySwitch({ onToggle, className }: LikedOnlySwitchProps) {
-  const [showLikedOnly, setShowLikedOnly] = useState(false);
-
-  const handleChange = (checked: boolean) => {
-    setShowLikedOnly(checked);
-    onToggle?.(checked);
+export function LikedOnlySwitch({
+  onToggle,
+  className,
+  checked,
+}: LikedOnlySwitchProps) {
+  const handleChange = (newChecked: boolean) => {
+    onToggle?.(newChecked);
   };
 
   return (
@@ -21,7 +22,7 @@ export function LikedOnlySwitch({ onToggle, className }: LikedOnlySwitchProps) {
       Show Liked Only
       <Switch
         className={className}
-        checked={showLikedOnly}
+        checked={checked ?? false}
         onCheckedChange={handleChange}
       />
     </div>

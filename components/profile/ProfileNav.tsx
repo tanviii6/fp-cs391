@@ -6,8 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// TODO: remove anys from hrefs
-
 interface ProfileNavProps {
   user: User;
   isProfileRoot?: boolean;
@@ -91,19 +89,9 @@ export default function ProfileNav({ user, isProfileRoot }: ProfileNavProps) {
               className={`${baseLinkClasses} ${
                 isActive("/lists") ? activeLinkAdditions : ""
               }`}
-              href={`/${user.username}/lists` as any}
+              href={`/${user.username}/lists`}
             >
               Lists
-            </Link>
-          </li>
-          <li>
-            <Link
-              className={`${baseLinkClasses} ${
-                isActive("/likes") ? activeLinkAdditions : ""
-              }`}
-              href={`/${user.username}/likes` as any}
-            >
-              Likes
             </Link>
           </li>
         </ul>
@@ -135,24 +123,14 @@ export default function ProfileNav({ user, isProfileRoot }: ProfileNavProps) {
             Films
           </Link>
         </li>
-        <li>
+        <li className="mr-auto">
           <Link
             className={`${baseLinkClasses} ${
               isActive("/lists") ? activeLinkAdditions : ""
             }`}
-            href={`/${user.username}/lists` as any}
+            href={`/${user.username}/lists`}
           >
             Lists
-          </Link>
-        </li>
-        <li className="mr-auto">
-          <Link
-            className={`${baseLinkClasses} ${
-              isActive("/likes") ? activeLinkAdditions : ""
-            }`}
-            href={`/${user.username}/likes` as any}
-          >
-            Likes
           </Link>
         </li>
       </ul>

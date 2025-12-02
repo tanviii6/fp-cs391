@@ -54,7 +54,7 @@ const MovieCard = ({
 
         <div className="flex flex-row items-center justify-between">
           <p className="text-xs text-gray-400 font-medium ml-1 mt-1">
-            {overview ? overview.slice(0, 30) + "..." : "No description"}
+            {overview ? overview.slice(0, 45) + "..." : "No description"}
           </p>
         </div>
       </div>

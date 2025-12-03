@@ -21,12 +21,6 @@ export default function Header() {
                     FilmFlow
                 </Link>
 
-                {/* Nav */}
-                <nav className="flex items-center gap-6 text-sm font-medium">
-                    <Link href="/films" className="hover:text-gray-600">Films</Link>
-                    <Link href="/lists" className="hover:text-gray-600">Lists</Link>
-                </nav>
-
                 {/* Auth Buttons */}
                 <div className="relative">
                     {!user && (

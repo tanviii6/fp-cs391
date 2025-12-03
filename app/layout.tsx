@@ -29,7 +29,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
 
   return (
     <html lang="en">
@@ -44,11 +43,6 @@ export default async function RootLayout({
             </div>
             <Footer />
         </SessionWrapper>
-        <div
-          id="content-wrapper"
-          className="w-full max-w-[950px] mx-auto my-0 px-4">
-          
-        </div>
       </body>
     </html>
   );

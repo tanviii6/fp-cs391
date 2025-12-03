@@ -1,13 +1,13 @@
 "use client";
 
-import { User } from "@/types/schemas";
+import { SerializedUser } from "@/types/schemas";
 import { User as DefaultUser } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface ProfileNavProps {
-  user: User;
+  user: SerializedUser;
   isProfileRoot?: boolean;
 }
 

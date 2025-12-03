@@ -5,15 +5,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "85ucf0l0o5.ufs.sh",
-        port: "",
-        pathname: "/f/**",
-      },
-      {
-        protocol: "https",
         hostname: "image.tmdb.org",
         port: "",
         pathname: "/t/p/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },

@@ -7,7 +7,7 @@ export interface User extends Document {
   avatar?: string;
   bio?: string;
   name: string;
-  username: string;
+  username?: string; // optional - users start without one until /setup
   email: string;
   createdAt: Date;
 }
@@ -137,4 +137,12 @@ export interface TMDBMovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
+}
+
+// i tried passing in the full user type to a client component but i received an error
+// complaining about the _id type being an ObjectId. Next.js didn't like this, so i created this
+// SerializedUser type that extends the user type and replaces _id?: ObjectId with _id?: string
+// so we can use a hex string for the _id instead
+export interface SerializedUser extends Omit<User, "_id"> {
+  _id?: string;
 }

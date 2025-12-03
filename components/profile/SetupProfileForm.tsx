@@ -3,22 +3,27 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SetupProfileForm({ email }: { email: string }) {
+export default function SetupProfileForm({
+  email,
+  avatar,
+}: {
+  email: string;
+  avatar?: string;
+}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
-  const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/@app/api/setup", {
+    const res = await fetch("/api/setup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, username, bio, avatar, email }),
+      body: JSON.stringify({ name, username, bio, email, avatar }),
     });
 
     if (res.ok) {
@@ -58,14 +63,6 @@ export default function SetupProfileForm({ email }: { email: string }) {
         value={bio}
         onChange={(e) => setBio(e.target.value)}
       />
-
-      <label className="text-sm uppercase tracking-wide">Avatar URL (optional)</label>
-      <input
-        className="bg-[#2a2f3a] text-white p-2 rounded-md outline-none"
-        value={avatar}
-        onChange={(e) => setAvatar(e.target.value)}
-      />
-
       <button
         type="submit"
         disabled={loading}

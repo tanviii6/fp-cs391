@@ -1,13 +1,13 @@
-import { List } from "@/types/schemas";
+import { List, SerializedUser } from "@/types/schemas";
 import Link from "next/link";
 
 interface ProfileListsSectionProps {
+  user: SerializedUser;
   lists?: List[]; // nullable until we are using real data
 }
 
-// TODO: update link, pass user from parent
-
 export default function ProfileListsSection({
+  user,
   lists,
 }: ProfileListsSectionProps) {
   return (
@@ -27,7 +27,7 @@ export default function ProfileListsSection({
               No lists yet.{" "}
               <Link
                 className="font-bold hover:text-[#DEF] hover:underline"
-                href={`/christian/lists/new`}
+                href={`/${user.username}/lists/new`}
               >
                 Create your first list?
               </Link>

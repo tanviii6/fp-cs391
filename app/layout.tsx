@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import SessionWrapper from "./SessionWrapper";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,9 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#14181C]`}
       >
-        <div id="content-wrapper" className="w-[950px] mx-auto my-0">
-          {children}
-        </div>
+        <SessionWrapper>
+            <Header />
+
+            <div id="content-wrapper" className="w-[950px] mx-auto my-0">
+                {children}
+            </div>
+            <Footer />
+        </SessionWrapper>
       </body>
     </html>
   );

@@ -1,9 +1,10 @@
 'use client';
 
-import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react"; // client-side auth functions
 import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
     const { data: session } = useSession();
@@ -30,7 +31,7 @@ export default function Header() {
                 <div className="relative">
                     {!user && (
                         <button
-                            onClick={() => signIn("google", { callbackUrl: "/" })}
+                            onClick={() => signIn("google")}
                             className="px-4 py-1.5 bg-black text-white rounded-md hover:bg-gray-800 text-sm"
                         >
                             Sign In
@@ -51,20 +52,25 @@ export default function Header() {
 
                             {menuOpen && (
                                 <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40 p-2 z-50">
-                                    <Link href={`/${user.name || "profile"}`} className="block px-3 py-2 hover:bg-gray-100 text-sm">
+                                    <Link
+                                        href={`/${user.username || "profile"}`}
+                                        className="block px-3 py-2 hover:bg-gray-100 text-sm"
+                                    >
                                         Profile
                                     </Link>
                                     <button
-                                        onClick={() => signOut({ callbackUrl: "/" })}
+                                        onClick={() => signOut()}
                                         className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
                                     >
                                         Sign Out
                                     </button>
                                 </div>
                             )}
+
                         </div>
                     )}
                 </div>
+
             </div>
         </header>
     );

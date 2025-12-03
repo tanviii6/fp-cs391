@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { auth, signOut } from "@/auth";
-import SignOut from "@/components/authentication/sign-out";
-import SignIn from "@/components/authentication/sign-in";
 
 //todo: I put a placeholder nav bar for now, going to implement once we confirm all the featues
 

@@ -6,6 +6,7 @@ import ProfileNav from "@/components/profile/ProfileNav";
 import ProfileListsSection from "@/components/profile/ProfileListsSection";
 import { getUsersCollection } from "@/db";
 import { SerializedUser } from "@/types/schemas";
+import { auth } from "@/auth";
 
 export default async function ListsPage({
   params,
@@ -26,6 +27,15 @@ export default async function ListsPage({
     );
   }
 
+  let owner: boolean;
+
+  const session = await auth();
+  if (session?.user?.email !== user.email) {
+    owner = false;
+  } else {
+    owner = true;
+  }
+
   const serializedUser: SerializedUser = {
     ...user,
     _id: user._id?.toHexString(),
@@ -37,7 +47,7 @@ export default async function ListsPage({
         <ProfileNav user={serializedUser} isProfileRoot={false} />
       </div>
       <div>
-        <ProfileListsSection user={serializedUser} />
+        <ProfileListsSection user={serializedUser} owner={owner} />
       </div>
     </div>
   );

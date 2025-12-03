@@ -4,11 +4,13 @@ import Link from "next/link";
 interface ProfileListsSectionProps {
   user: SerializedUser;
   lists?: List[]; // nullable until we are using real data
+  owner: boolean; // this owner flag will let us know if the logged in user owns this account
 }
 
 export default function ProfileListsSection({
   user,
   lists,
+  owner,
 }: ProfileListsSectionProps) {
   return (
     <section>
@@ -25,12 +27,14 @@ export default function ProfileListsSection({
           <h2 className="text-center text-[#89a] m-0 font-normal">
             <span>
               No lists yet.{" "}
-              <Link
-                className="font-bold hover:text-[#DEF] hover:underline"
-                href={`/${user.username}/lists/new`}
-              >
-                Create your first list?
-              </Link>
+              {owner && (
+                <Link
+                  className="font-bold hover:text-[#DEF] hover:underline"
+                  href={`/${user.username}/lists/new`}
+                >
+                  Create your first list?
+                </Link>
+              )}
             </span>
           </h2>
         </section>

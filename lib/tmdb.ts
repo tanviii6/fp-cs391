@@ -2,7 +2,7 @@
 
 import {
   TMDBMovieListItem,
-  // TMDBMovieDetails,
+  TMDBMovieDetails,
   TMDBSearchResponse,
 } from "@/types/schemas";
 
@@ -48,5 +48,15 @@ export async function searchMovies(
   const encodedQuery = encodeURIComponent(query);
   return tmdbRequest<TMDBSearchResponse<TMDBMovieListItem>>(
     `/search/movie?query=${encodedQuery}&language=${language}&page=${page}`,
+  );
+}
+
+// gets the movie details using the ID
+export async function getMovieDetails(
+  movieId: string | number,
+  language: string = "en-US",
+): Promise<TMDBMovieDetails> {
+  return tmdbRequest<TMDBMovieDetails>(
+    `/movie/${movieId}?language=${language}`,
   );
 }

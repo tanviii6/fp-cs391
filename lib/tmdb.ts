@@ -57,6 +57,6 @@ export async function getMovieDetails(
   language: string = "en-US",
 ): Promise<TMDBMovieDetails> {
   return tmdbRequest<TMDBMovieDetails>(
-    `/movie/${movieId}?language=${language}`,
+    `/movie/${movieId}?language=${language}&append_to_response=credits`,
   );
 }

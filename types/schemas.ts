@@ -137,6 +137,27 @@ export interface TMDBMovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  credits?: {
+    cast: TMDBCastMember[];
+    crew: TMDBCrewMember[];
+  };
+}
+
+export interface TMDBCastMember {
+  id: number;
+  name: string;
+  character: string;
+  order: number;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface TMDBCrewMember {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
 }
 
 // i tried passing in the full user type to a client component but i received an error

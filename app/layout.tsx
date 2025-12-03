@@ -43,7 +43,7 @@ export default async function RootLayout({
             <SignIn/>
           )}
         </nav>
-        <div id="content-wrapper" className="w-[950px] mx-auto my-0">
+        <div id="content-wrapper" className="w-full max-w-[950px] mx-auto my-0 px-4">
           {children}
         </div>
       </body>

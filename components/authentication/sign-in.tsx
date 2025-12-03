@@ -1,5 +1,6 @@
 
 import { signIn } from "@/auth"
+import { Button } from "../ui/button"
  
 export default function SignIn() {
   return (
@@ -9,12 +10,7 @@ export default function SignIn() {
         await signIn("google")
       }}
     >
-      <button
-        type="submit"
-        className="bg-blue-600 px-3 py-1 rounded-md"
-      >
-        Sign in
-      </button>
+      <Button variant="outline" size="lg"><p className="text-black">Sign in</p></Button>
     </form>
   )
 } 

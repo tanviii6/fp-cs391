@@ -42,21 +42,15 @@ export default async function RootLayout({
         <SessionWrapper>
             <Header />
 
-            <div id="content-wrapper" className="w-[950px] mx-auto my-0">
+            <div id="content-wrapper" className="w-[90vw] mx-auto my-0">
                 {children}
             </div>
             <Footer />
         </SessionWrapper>
-        <nav className="p-4 flex justify-between items-center bg-gray-900 text-white mb-4">
-          <h1 className="text-xl font-bold">Movie App</h1>
-
-          {session?.user ? <SignOut name={session.user.name} /> : <SignIn />}
-        </nav>
         <div
           id="content-wrapper"
-          className="w-full max-w-[950px] mx-auto my-0 px-4"
-        >
-          {children}
+          className="w-full max-w-[950px] mx-auto my-0 px-4">
+          
         </div>
       </body>
     </html>

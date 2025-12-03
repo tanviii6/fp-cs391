@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
 import { auth, signOut } from "@/auth";
 import SignOut from "@/components/authentication/sign-out";
 import SignIn from "@/components/authentication/sign-in";
@@ -32,12 +33,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#14181C]`}
       >
-<<<<<<< HEAD
         <SessionWrapper>
             <Header />
 
@@ -46,7 +47,6 @@ export default async function RootLayout({
             </div>
             <Footer />
         </SessionWrapper>
-=======
         <nav className="p-4 flex justify-between items-center bg-gray-900 text-white mb-4">
           <h1 className="text-xl font-bold">Movie App</h1>
 
@@ -58,7 +58,6 @@ export default async function RootLayout({
         >
           {children}
         </div>
->>>>>>> 90fd54549ba971950a2c799bbbea03c8f54bd64c
       </body>
     </html>
   );

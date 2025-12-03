@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -22,34 +22,24 @@ export default function Header() {
 
                 {/* Nav */}
                 <nav className="flex items-center gap-6 text-sm font-medium">
-                    <Link href="/films" className="hover:text-gray-600">
-                        Films
-                    </Link>
-                    <Link href="/lists" className="hover:text-gray-600">
-                        Lists
-                    </Link>
+                    <Link href="/films" className="hover:text-gray-600">Films</Link>
+                    <Link href="/lists" className="hover:text-gray-600">Lists</Link>
                 </nav>
 
-                {/* Right Side: Auth */}
+                {/* Auth Buttons */}
                 <div className="relative">
-                    {/* If signed out */}
                     {!user && (
                         <button
-                            onClick={() => signIn("google")}
+                            onClick={() => signIn("google", { callbackUrl: "/" })}
                             className="px-4 py-1.5 bg-black text-white rounded-md hover:bg-gray-800 text-sm"
                         >
                             Sign In
                         </button>
                     )}
 
-                    {/* If signed in */}
                     {user && (
                         <div className="flex items-center gap-3">
-                            {/* Avatar button */}
-                            <button
-                                onClick={() => setMenuOpen(!menuOpen)}
-                                className="flex items-center"
-                            >
+                            <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center">
                                 <Image
                                     src={user.image || "/default-avatar.png"}
                                     alt="User Avatar"
@@ -59,18 +49,13 @@ export default function Header() {
                                 />
                             </button>
 
-                            {/* Dropdown Menu */}
                             {menuOpen && (
                                 <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40 p-2 z-50">
-                                    <Link
-                                        href={`/${user.name || "profile"}`}
-                                        className="block px-3 py-2 hover:bg-gray-100 text-sm"
-                                    >
+                                    <Link href={`/${user.name || "profile"}`} className="block px-3 py-2 hover:bg-gray-100 text-sm">
                                         Profile
                                     </Link>
-
                                     <button
-                                        onClick={() => signOut()}
+                                        onClick={() => signOut({ callbackUrl: "/" })}
                                         className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
                                     >
                                         Sign Out

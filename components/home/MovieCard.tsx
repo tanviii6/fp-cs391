@@ -11,6 +11,7 @@ interface MovieCardProps {
   average_rating: number;
   release_date: string;
   overview: string;
+  overviewMaxLength?: number;
 }
 
 const MovieCard = ({
@@ -20,10 +21,11 @@ const MovieCard = ({
   average_rating,
   release_date,
   overview,
+  overviewMaxLength,
 }: MovieCardProps) => {
   return (
-    <Link href={`/movies/${id}`} className=" w-44 cursor-pointer">
-      <div>
+    <Link href={`/movies/${id}`} className="block w-44 cursor-pointer">
+      <div className="flex h-full flex-col">
         <Image
           src={
             poster_path
@@ -33,10 +35,12 @@ const MovieCard = ({
           alt={title}
           width={500}
           height={750}
-          className="w-full h-auto rounded-lg"
+          className="aspect-[2/3] h-auto w-full rounded-lg object-cover"
         />
 
-        <p className="text-sm font-bold text-white mt-2 ">{title}</p>
+        <p className="mt-2 min-h-[2.5rem] text-sm font-bold text-white line-clamp-2">
+          {title}
+        </p>
 
         <div className="flex flex-row items-center gap-x-1">
           {Array.from({ length: Math.round(average_rating /2) }).map(
@@ -55,8 +59,8 @@ const MovieCard = ({
         </div>
 
         <div className="flex flex-row items-center justify-between">
-          <p className="text-xs text-gray-400 font-medium ml-1 mt-1">
-            {overview ? overview.slice(0, 45) + "..." : "No description"}
+          <p className="ml-1 mt-1 min-h-[2.75rem] text-xs font-medium text-gray-400 line-clamp-2">
+            {displayOverview}
           </p>
         </div>
       </div>

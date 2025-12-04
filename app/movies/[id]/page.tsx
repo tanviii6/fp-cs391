@@ -44,20 +44,20 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
   const studios = studiosFiltered.length ? studiosFiltered : studiosRaw;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-[#14181C] text-slate-50 font-sans selection:bg-emerald-500/30">
       <div className="relative h-[500px] w-full">
         {movie.backdrop_path ? (
           <Image
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
             alt={`${movie.title} backdrop`}
             fill
-            className="object-cover opacity-60" 
+            className="object-cover opacity-60"
             priority
           />
         ) : (
-          <div className="absolute inset-0 bg-slate-900" />
+          <div className="absolute inset-0 bg-[#0f1318]" />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent" /> 
+        <div className="absolute inset-0 bg-gradient-to-t from-[#14181C] via-[#14181C]/75 to-transparent" />
         
         <div className="absolute top-0 left-0 z-20 w-full px-6 py-6">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
@@ -174,10 +174,10 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
                   (showAllCast ? cast : cast.slice(0, 20)).map((member: TMDBCastMember) => ( // cap at 20 unless expanded
                     <span
                       key={member.id}
-                      className="inline-flex items-center rounded bg-slate-900 px-2 py-1 text-xs text-slate-300 border border-slate-800"
+                      className="inline-flex items-center rounded bg-[#1c2430] px-2 py-1 text-xs text-slate-200 border border-[#2c3542] shadow-sm"
                     >
-                      <span className="text-slate-100 mr-1">{member.name}</span>
-                      {member.character && <span className="text-slate-500 truncate max-w-[150px]"> as {member.character}</span>}
+                      <span className="text-slate-50 mr-1">{member.name}</span>
+                      {member.character && <span className="text-slate-400 truncate max-w-[150px]"> as {member.character}</span>}
                     </span>
                   ))
                 ) : (
@@ -204,10 +204,10 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
                   (showAllCrew ? crew : crew.slice(0, 20)).map((member: TMDBCrewMember) => (
                     <span
                       key={`${member.id}-${member.job}`}
-                      className="inline-flex items-center rounded bg-slate-900 px-2 py-1 text-xs text-slate-300 border border-slate-800"
+                      className="inline-flex items-center rounded bg-[#1c2430] px-2 py-1 text-xs text-slate-200 border border-[#2c3542] shadow-sm"
                     >
-                      <span className="text-slate-100 mr-1">{member.name}</span>
-                      {member.job && <span className="text-slate-500"> — {member.job}</span>}
+                      <span className="text-slate-50 mr-1">{member.name}</span>
+                      {member.job && <span className="text-slate-400"> — {member.job}</span>}
                     </span>
                   ))
                 ) : (

@@ -10,7 +10,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Header() {
+export default function Header() { 
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
     const [dbUser, setDbUser] = useState<{ username?: string } | null>(null);
@@ -18,7 +18,7 @@ export default function Header() {
 
     // Fetch the user from the DB on the client
     useEffect(() => {
-        if (!session?.user?.email) return;
+        if (!session?.user?.email) return; 
 
         const fetchUser = async () => {
             const res = await fetch(`/api/users?email=${session.user.email}`);
@@ -50,9 +50,17 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#0f1318]/95 backdrop-blur">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-tight text-white">
-                    FilmFlow
+                <Link href="/" className="flex items-center gap-3 text-2xl font-bold tracking-tight text-white">
+                    <Image
+                        src="/logofilmflow12.png"
+                        alt="FilmFlow logo"
+                        width={56}
+                        height={56}
+                        className="h-10 w-10 object-contain scale-250 transform"
+                        priority
+                    />
                 </Link>
 
                 {/* Nav */}

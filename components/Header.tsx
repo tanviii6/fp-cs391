@@ -29,19 +29,24 @@ export default function Header() {
     const username = dbUser?.username;
 
     return (
-        <header className="w-full border-b bg-white sticky top-0 z-50">
-            <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
-
+        <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#0f1318]/95 backdrop-blur">
+            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-tight">
+                <Link href="/" className="text-2xl font-bold tracking-tight text-white">
                     FilmFlow
                 </Link>
 
                 {/* Nav */}
-                <nav className="flex items-center gap-6 text-sm font-medium">
-                    <Link href="/films" className="hover:text-gray-600">Films</Link>
-                    <Link href="/lists" className="hover:text-gray-600">Lists</Link>
-                    <Link href="/search" className="hover:text-gray-600">Search</Link>
+                <nav className="flex items-center gap-6 text-sm font-medium text-slate-200">
+                    <Link href="/films" className="transition hover:text-white">
+                        Films
+                    </Link>
+                    <Link href="/lists" className="transition hover:text-white">
+                        Lists
+                    </Link>
+                    <Link href="/search" className="transition hover:text-white">
+                        Search
+                    </Link>
                 </nav>
 
                 {/* Auth Buttons */}
@@ -49,7 +54,7 @@ export default function Header() {
                     {!user && (
                         <button
                             onClick={() => signIn("google")}
-                            className="px-4 py-1.5 bg-black text-white rounded-md hover:bg-gray-800 text-sm"
+                            className="rounded-md border border-slate-700 bg-slate-800 px-4 py-1.5 text-sm font-semibold text-white transition hover:border-slate-500 hover:bg-slate-700"
                         >
                             Sign In
                         </button>
@@ -63,21 +68,21 @@ export default function Header() {
                                     alt="User Avatar"
                                     width={36}
                                     height={36}
-                                    className="rounded-full border cursor-pointer"
+                                    className="cursor-pointer rounded-full border border-slate-700"
                                 />
                             </button>
 
                             {menuOpen && (
-                                <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40 p-2 z-50">
+                                <div className="absolute right-0 mt-2 w-40 rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
                                     <Link
                                         href={`/${username || "profile"}`}
-                                        className="block px-3 py-2 hover:bg-gray-100 text-sm"
+                                        className="block px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
                                     >
                                         Profile
                                     </Link>
                                     <button
                                         onClick={() => signOut()}
-                                        className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
+                                        className="block w-full px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
                                     >
                                         Sign Out
                                     </button>
@@ -86,7 +91,6 @@ export default function Header() {
                         </div>
                     )}
                 </div>
-
             </div>
         </header>
     );

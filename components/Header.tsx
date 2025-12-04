@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-export default function Header() { 
+export default function Header() {
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
     const [dbUser, setDbUser] = useState<{ username?: string } | null>(null);
     const avatarMenuRef = useRef<HTMLDivElement | null>(null);
+    const pathname = usePathname();
 
     // Fetch the user from the DB on the client
     useEffect(() => {
@@ -60,13 +62,22 @@ export default function Header() {
 
                 {/* Nav */}
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-200">
-                    <Link href="/" className="transition hover:text-white">
+                    <Link
+                        href="/"
+                        className={`transition hover:text-white ${pathname === "/" ? "text-emerald-400" : ""}`}
+                    >
                         Home
                     </Link>
-                    <Link href="/lists" className="transition hover:text-white">
+                    <Link
+                        href="/lists"
+                        className={`transition hover:text-white ${pathname.startsWith("/lists") ? "text-emerald-400" : ""}`}
+                    >
                         Favorites
                     </Link>
-                    <Link href="/search" className="transition hover:text-white">
+                    <Link
+                        href="/search"
+                        className={`transition hover:text-white ${pathname.startsWith("/search") ? "text-emerald-400" : ""}`}
+                    >
                         Search
                     </Link>
                 </nav>

@@ -141,15 +141,17 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
       </div>
 
       <div className="mx-auto max-w-6xl px-6 pb-24" id="sections">
-        {/* tab navigation */}
-        <nav className="mb-8 flex gap-6 border-b border-slate-800 pb-1">
+        
+        
+        
+        <nav className="mb-8 flex gap-6 border-b border-slate-800 pb-1"> 
           {[
             { key: "cast", label: "Cast" },
             { key: "crew", label: "Crew" },
             { key: "details", label: "Details" },
             { key: "links", label: "Links" },
           ].map((item) => {
-            const isActive = currentSection === item.key;
+            const isActive = currentSection === item.key; // tab navigation
             return (
               <Link
                 key={item.key}

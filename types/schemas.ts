@@ -18,10 +18,10 @@ export interface Film extends Document {
   title: string;
   releaseYear?: number;
   posterUrl?: string;
-  director?: string;
+  directors?: TMDBCrewMember[];
   synopsis?: string;
   runtimeMinutes?: number;
-  genres?: string[];
+  genres?: TMDBMovieDetails["genres"];
   averageRating: number;
   totalRatings: number;
 }
@@ -30,9 +30,8 @@ export interface Watched extends Document {
   _id?: ObjectId;
   userId: ObjectId;
   filmId: ObjectId;
-  watchedDate: Date;
-  rating?: number | null; // 0-5 or null
-  isFavorite: boolean;
+  rating?: number; // 0-5 or null
+  isFavorite?: boolean;
   loggedAt: Date;
 }
 
@@ -165,5 +164,10 @@ export interface TMDBCrewMember {
 // SerializedUser type that extends the user type and replaces _id?: ObjectId with _id?: string
 // so we can use a hex string for the _id instead
 export interface SerializedUser extends Omit<User, "_id"> {
+  _id?: string;
+}
+
+// same for Film - we need a serialized version for client components
+export interface SerializedFilm extends Omit<Film, "_id"> {
   _id?: string;
 }

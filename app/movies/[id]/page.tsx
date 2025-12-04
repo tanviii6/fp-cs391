@@ -45,7 +45,7 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
 
   return (
     <div className="min-h-screen bg-[#14181C] text-slate-50 font-sans selection:bg-emerald-500/30">
-      <div className="relative h-[500px] w-full">
+      <div className="relative h-[500px] w-screen max-w-none -mx-[5vw]">
         {movie.backdrop_path ? (
           <Image
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}

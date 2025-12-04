@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,6 +9,7 @@ export default function Header() {
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
     const [dbUser, setDbUser] = useState<{ username?: string } | null>(null);
+    const avatarMenuRef = useRef<HTMLDivElement | null>(null);
 
     // Fetch the user from the DB on the client
     useEffect(() => {
@@ -25,6 +26,19 @@ export default function Header() {
         fetchUser();
     }, [session?.user?.email]);
 
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        const handleOutsideClick = (event: PointerEvent) => {
+            if (avatarMenuRef.current && !avatarMenuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener("pointerdown", handleOutsideClick);
+        return () => document.removeEventListener("pointerdown", handleOutsideClick);
+    }, [menuOpen]);
+
     const user = session?.user;
     const username = dbUser?.username;
 
@@ -38,11 +52,11 @@ export default function Header() {
 
                 {/* Nav */}
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-200">
-                    <Link href="/films" className="transition hover:text-white">
-                        Films
+                    <Link href="/" className="transition hover:text-white">
+                        Home
                     </Link>
                     <Link href="/lists" className="transition hover:text-white">
-                        Lists
+                        Favorites
                     </Link>
                     <Link href="/search" className="transition hover:text-white">
                         Search
@@ -50,7 +64,7 @@ export default function Header() {
                 </nav>
 
                 {/* Auth Buttons */}
-                <div className="relative">
+                <div className="relative" ref={avatarMenuRef}>
                     {!user && (
                         <button
                             onClick={() => signIn("google")}
@@ -73,16 +87,16 @@ export default function Header() {
                             </button>
 
                             {menuOpen && (
-                                <div className="absolute right-0 mt-2 w-40 rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
+                                <div className="absolute right-0 top-full mt-3 w-48 rounded-xl border border-slate-700 bg-[#0f1318] py-3 shadow-lg shadow-black/40">
                                     <Link
                                         href={`/${username || "profile"}`}
-                                        className="block px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                                        className="block px-5 py-2 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
                                     >
                                         Profile
                                     </Link>
                                     <button
                                         onClick={() => signOut()}
-                                        className="block w-full px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                                        className="block w-full px-5 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
                                     >
                                         Sign Out
                                     </button>

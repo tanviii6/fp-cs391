@@ -47,7 +47,7 @@ export default function MovieSearch({ initialMovies }: MovieSearchProps) {
         setError(null);
       } catch (err) {
         if (controller.signal.aborted) return;
-        console.error("Movie search failed", err);
+        console.error("Movie search failed.", err);
         setError("Couldn't fetch movies. Please try again.");
         setMovies([]);
       } finally {

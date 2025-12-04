@@ -1,9 +1,11 @@
+import Image from "next/image";
+import Link from "next/link";
 import MovieCard from "@/components/home/MovieCard";
 import TrendingCarousel from "@/components/home/TrendingCarousel";
 import { TMDBMovieListItem, TMDBSearchResponse } from "@/types/schemas";
 
 async function fetchPopularMovies(
-  page: number = 1,
+  page: number = 1
 ): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
   try {
     const apiKey = process.env.TMDB_API_KEY?.trim();
@@ -44,19 +46,50 @@ async function fetchPopularMovies(
   }
 }
 
-export default async function Home() {
-<<<<<<< Updated upstream
-  const popularMovies = await fetchPopularMovies();
-  const topTen = popularMovies.slice(0, 10);
+async function fetchTopRatedMovies(
+  page: number = 1
+): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
+  try {
+    const apiKey = process.env.TMDB_API_KEY?.trim();
+    if (!apiKey) {
+      console.error("TMDB API key is not set");
+      return {
+        page,
+        results: [],
+        total_pages: 0,
+        total_results: 0,
+      };
+    }
 
-  return (
-    <main className="flex flex-col gap-6 pb-12 pt-8">
-      <section className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold text-white">Trending Now</h2>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {topTen.length === 0 ? (
-=======
-  const [popularData, topRatedMovies] = await Promise.all([
+    const url = `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      throw new Error(`TMDB top rated request failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (!data.results || !Array.isArray(data.results)) {
+      throw new Error("Invalid API response format");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching top rated movies", error);
+    return {
+      page,
+      results: [],
+      total_pages: 0,
+      total_results: 0,
+    };
+  }
+}
+
+export default async function Home() {
+  const [popularData, topRatedData] = await Promise.all([
     fetchPopularMovies(),
     fetchTopRatedMovies(),
   ]);
@@ -64,7 +97,7 @@ export default async function Home() {
   const popularMovies = popularData.results || [];
   const popularPage = popularData.page || 1;
   const popularTotalPages = popularData.total_pages;
-  const highestRated = topRatedMovies.slice(0, 10);
+  const highestRated = (topRatedData.results || []).slice(0, 10);
   const heroMovie = popularMovies[0];
   const heroBackdrop = heroMovie?.backdrop_path || heroMovie?.poster_path;
 
@@ -99,8 +132,9 @@ export default async function Home() {
             Discover, track, and share the films you love.
           </h1>
           <p className="max-w-3xl text-base text-slate-200">
-            Browse trending titles, curate favorites, and stay on top of what&apos;s worth watching.
-            Built for movie lovers with clean lists and quick discovery.
+            Browse trending titles, curate favorites, and stay on top of
+            what&apos;s worth watching. Built for movie lovers with clean lists
+            and quick discovery.
           </p>
         </div>
         <div className="relative mt-5">
@@ -126,16 +160,11 @@ export default async function Home() {
         <h2 className="text-2xl font-semibold text-white">Highest Rated</h2>
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {highestRated.length === 0 ? (
->>>>>>> Stashed changes
             <p className="col-span-full text-center text-slate-300">
               No movies found.
             </p>
           ) : (
-<<<<<<< Updated upstream
-            topTen.map((movie) => (
-=======
-            highestRated.map((movie) => (
->>>>>>> Stashed changes
+            highestRated.map((movie: TMDBMovieListItem) => (
               <MovieCard
                 key={movie.id}
                 id={movie.id}

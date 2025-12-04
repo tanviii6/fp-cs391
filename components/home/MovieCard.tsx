@@ -23,6 +23,11 @@ const MovieCard = ({
   overview,
   overviewMaxLength,
 }: MovieCardProps) => {
+  const displayOverview =
+    overviewMaxLength && overview.length > overviewMaxLength
+      ? `${overview.slice(0, overviewMaxLength).trim()}...`
+      : overview;
+
   return (
     <Link href={`/movies/${id}`} className="block w-44 cursor-pointer">
       <div className="flex h-full flex-col">
@@ -43,7 +48,7 @@ const MovieCard = ({
         </p>
 
         <div className="flex flex-row items-center gap-x-1">
-          {Array.from({ length: Math.round(average_rating /2) }).map(
+          {Array.from({ length: Math.round(average_rating / 2) }).map(
             (_, idx) => (
               <AiFillStar
                 key={idx}

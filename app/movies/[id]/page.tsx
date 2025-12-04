@@ -1,3 +1,8 @@
+/*
+Collaborators: Ron Bajrami and Jude Hosmer
+*/
+
+
 import Image from "next/image";
 import Link from "next/link";
 import { AiFillStar } from "react-icons/ai";

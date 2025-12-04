@@ -1,3 +1,8 @@
+/*
+Collaborators: Ron Bajrami, Jude Hosmer, Charlie Howard
+*/
+
+
 'use client';
 
 import { useEffect, useRef, useState } from "react";

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-import { getUsersCollection } from "@/db";
 
 export default function Header() {
     const { data: session } = useSession();
@@ -42,6 +41,7 @@ export default function Header() {
                 <nav className="flex items-center gap-6 text-sm font-medium">
                     <Link href="/films" className="hover:text-gray-600">Films</Link>
                     <Link href="/lists" className="hover:text-gray-600">Lists</Link>
+                    <Link href="/search" className="hover:text-gray-600">Search</Link>
                 </nav>
 
                 {/* Auth Buttons */}

@@ -39,7 +39,7 @@ const MovieCard = ({
         <p className="text-sm font-bold text-white mt-2 ">{title}</p>
 
         <div className="flex flex-row items-center gap-x-1">
-          {Array.from({ length: Math.round(average_rating / 2) }).map(
+          {Array.from({ length: Math.round(average_rating /2) }).map(
             (_, idx) => (
               <AiFillStar
                 key={idx}

@@ -1,4 +1,4 @@
-import MovieSearch from "@/components/home/MovieSearch";
+import MovieCard from "@/components/home/MovieCard";
 import { TMDBMovieListItem } from "@/types/schemas";
 
 async function fetchPopularMovies(): Promise<TMDBMovieListItem[]> {
@@ -9,10 +9,11 @@ async function fetchPopularMovies(): Promise<TMDBMovieListItem[]> {
       return [];
     }
 
-    const url = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1";
+    const url =
+      "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1";
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${apiKey}` },
-      next: { revalidate: 3667 },
+      next: { revalidate: 3600 },
     });
 
     if (!res.ok) {
@@ -33,10 +34,32 @@ async function fetchPopularMovies(): Promise<TMDBMovieListItem[]> {
 
 export default async function Home() {
   const popularMovies = await fetchPopularMovies();
+  const topTen = popularMovies.slice(0, 10);
 
   return (
-    <main className="flex flex-col gap-8 pb-10 pt-6">
-      <MovieSearch initialMovies={popularMovies} />
+    <main className="flex flex-col gap-6 pb-12 pt-8">
+      <section className="flex flex-col gap-4">
+        <h2 className="text-2xl font-semibold text-white">Trending Now</h2>
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {topTen.length === 0 ? (
+            <p className="col-span-full text-center text-slate-300">
+              No movies found.
+            </p>
+          ) : (
+            topTen.map((movie) => (
+              <MovieCard
+                key={movie.id}
+                id={movie.id}
+                poster_path={movie.poster_path}
+                title={movie.title}
+                average_rating={movie.vote_average}
+                release_date={movie.release_date}
+                overview={movie.overview}
+              />
+            ))
+          )}
+        </div>
+      </section>
     </main>
   );
 }

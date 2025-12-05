@@ -1,5 +1,9 @@
 import { List, SerializedUser } from "@/types/schemas";
 import Link from "next/link";
+import UserListsDisplay from "@/components/profile/lists/UserListsDisplay";
+import { Button } from "../ui/button";
+
+
 
 interface ProfileListsSectionProps {
   user: SerializedUser;
@@ -40,9 +44,22 @@ export default function ProfileListsSection({
         </section>
       ) : (
         <section className="border border-[#456] bg-transparent py-16 px-8 rounded-sm leading-normal text-sm">
-          <h2 className="text-center text-[#89a] m-0 font-normal">
-            <span>IMPLEMENT LISTS</span>
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">Your Lists</h2>
+            {owner && (
+              <Link href={`/${user.username}/lists/new`}>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="bg-[#00ac1c] hover:bg-[#009d1a] text-white"
+                >
+                  Add New List
+                </Button>
+              </Link>
+            )}
+          </div>
+
+          <UserListsDisplay username={user.username} />
         </section>
       )}
     </section>

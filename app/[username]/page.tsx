@@ -8,6 +8,8 @@ import { User as DefaultUser } from "lucide-react";
 import Image from "next/image";
 import { getUsersCollection, getWatchedCollection } from "@/db";
 import { SerializedUser } from "@/types/schemas";
+import UserListsDisplay from "@/components/profile/lists/UserListsDisplay";
+
 
 // this page was styled after the official letterboxd profile page
 export default async function ProfilePage({
@@ -102,6 +104,10 @@ export default async function ProfilePage({
         <ProfileNav user={serializedUser} isProfileRoot={true} />
       </div>
       <ProfileContent user={serializedUser} />
+      <div className="mt-10">
+        <UserListsDisplay username={serializedUser.username} />
+      </div>
     </div>
+    
   );
 }

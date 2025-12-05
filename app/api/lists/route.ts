@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createList } from "@/lib/lists";
+import { createList, getUserLists } from "@/lib/lists";
 
 
 export async function POST(req: Request) {
@@ -24,4 +24,12 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const username = searchParams.get("username");
+  const lists = await getUserLists(username || "");
+  return NextResponse.json({ lists });
 }

@@ -11,11 +11,19 @@ interface ProfileListsSectionProps {
   owner: boolean; // this owner flag will let us know if the logged in user owns this account
 }
 
-export default function ProfileListsSection({
+export default async function ProfileListsSection({
   user,
   lists,
   owner,
 }: ProfileListsSectionProps) {
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/lists?username=${user.username}`,
+    { cache: "no-store" }
+  );
+  const data = await res.json()
+  const hasLists = Array.isArray(data?.lists) && data.lists.length > 0;
+
   return (
     <section>
       <div
@@ -26,7 +34,7 @@ export default function ProfileListsSection({
           <span>YOUR LISTS</span>
         </h1>
       </div>
-      {!lists ? (
+      {!hasLists ? (
         <section className="border border-[#456] bg-transparent py-16 px-8 rounded-sm leading-normal text-sm">
           <h2 className="text-center text-[#89a] m-0 font-normal">
             <span>

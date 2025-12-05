@@ -123,7 +123,7 @@ export default function CreateListForm({ username }: { username: string }) {
     setFilms(films.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const formData: ListFormData = {
@@ -140,7 +140,33 @@ export default function CreateListForm({ username }: { username: string }) {
     }
 
     // TODO: add list to db
-    console.log("Form data:", result.data);
+    try {
+      const res = await fetch("/api/lists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          name: result.data.name,
+          description: result.data.description,
+          films: result.data.films,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Error creating list:", err);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("List created successfully:", data);
+      setName("");
+      setDescription("");
+      setFilms([]);
+      window.location.href = `/${username}/lists`;
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
   };
 
   return (

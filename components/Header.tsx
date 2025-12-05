@@ -19,6 +19,7 @@ export default function Header() {
             const res = await fetch(`/api/users?email=${session.user.email}`);
             if (res.ok) {
                 const user = await res.json();
+                console.log("Fetched DB user:", user);
                 setDbUser(user);
             }
         };
@@ -39,12 +40,6 @@ export default function Header() {
 
                 {/* Nav */}
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-200">
-                    <Link href="/films" className="transition hover:text-white">
-                        Films
-                    </Link>
-                    <Link href="/lists" className="transition hover:text-white">
-                        Lists
-                    </Link>
                     <Link href="/search" className="transition hover:text-white">
                         Search
                     </Link>
@@ -78,13 +73,16 @@ export default function Header() {
                                     <Link
                                         href={username ? `/${username}` : "#"}
                                         className={`block px-3 py-2 text-sm text-slate-200 transition ${
-                                            username
+                                            !dbUser
+                                            ? "opacity-50 cursor-wait"
+                                            : username
                                             ? "hover:bg-slate-800 hover:text-white"
                                             : "opacity-50 cursor-not-allowed"
                                         }`}
                                         >
-                                        Profile
-                                    </Link>
+                                        {dbUser ? "Profile" : "Loading..."}
+                                     </Link>
+
                                     <button
                                         onClick={() => signOut()}
                                         className="block w-full px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"

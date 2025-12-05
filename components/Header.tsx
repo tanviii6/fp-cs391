@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
     const { data: session } = useSession();
+    const pathname = usePathname();
     const [menuOpen, setMenuOpen] = useState(false);
     const [dbUser, setDbUser] = useState<{ username?: string } | null>(null);
 
@@ -27,22 +29,61 @@ export default function Header() {
         fetchUser();
     }, [session?.user?.email]);
 
+    const navLinks = useMemo(() => {
+        const base = [
+            { href: "/", label: "Home" },
+            { href: "/search", label: "Search" },
+        ];
+
+        if (dbUser?.username) {
+            base.push(
+                { href: `/${dbUser.username}/lists`, label: "My Lists" },
+                { href: `/${dbUser.username}/lists/new`, label: "Create List" }
+            );
+        }
+
+        return base;
+    }, [dbUser?.username]);
+
     const user = session?.user;
     const username = dbUser?.username;
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#0f1318]/95 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-                {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-tight text-white">
-                    FilmFlow
+            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 overflow-visible">
+                <Link href="/" className="flex items-center gap-2" aria-label="FilmFlow home">
+                    <Image
+                        src="/logofilmflow12.png"
+                        alt="FilmFlow logo"
+                        width={140}
+                        height={48}
+                        className="h-9 w-auto object-contain scale-275"
+                        priority
+                    />
                 </Link>
 
-                {/* Nav */}
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-200">
-                    <Link href="/search" className="transition hover:text-white">
-                        Search
-                    </Link>
+                    {navLinks.map((link) => {
+                        const isActive =
+                            link.href === "/"
+                                ? pathname === "/"
+                                : pathname?.startsWith(link.href);
+
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                aria-current={isActive ? "page" : undefined}
+                                className={`transition ${
+                                    isActive
+                                        ? "text-emerald-400"
+                                        : "text-slate-200 hover:text-white"
+                                }`}
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Auth Buttons */}
@@ -69,19 +110,19 @@ export default function Header() {
                             </button>
 
                             {menuOpen && (
-                                <div className="absolute right-0 mt-2 w-40 rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
+                                <div className="absolute right-0 mt-3 min-w-[11rem] rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
                                     <Link
                                         href={username ? `/${username}` : "#"}
                                         className={`block px-3 py-2 text-sm text-slate-200 transition ${
                                             !dbUser
-                                            ? "opacity-50 cursor-wait"
-                                            : username
-                                            ? "hover:bg-slate-800 hover:text-white"
-                                            : "opacity-50 cursor-not-allowed"
+                                                ? "cursor-wait opacity-50"
+                                                : username
+                                                    ? "hover:bg-slate-800 hover:text-white"
+                                                    : "cursor-not-allowed opacity-50"
                                         }`}
-                                        >
+                                    >
                                         {dbUser ? "Profile" : "Loading..."}
-                                     </Link>
+                                    </Link>
 
                                     <button
                                         onClick={() => signOut({ callbackUrl: "/" })}

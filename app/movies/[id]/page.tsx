@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AiFillStar } from "react-icons/ai";
 import MovieLogger from "@/components/movies/MovieLogger";
+import StarDisplay from "@/components/ratings/StarDisplay";
 
 import { getMovieDetails } from "@/lib/tmdb";
 import { getCurrentUser } from "@/lib/users";
@@ -193,11 +193,11 @@ export default async function MoviePage({
             </div>
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-1 text-amber-400">
-                <span className="text-lg font-bold text-white mr-1">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-white">
                   {movie.vote_average.toFixed(1)}
                 </span>
-                <AiFillStar className="text-lg" />
+                <StarDisplay rating={movie.vote_average} size={16} className="text-amber-400" />
               </div>
 
               {movie.genres?.length > 0 && (

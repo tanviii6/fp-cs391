@@ -9,7 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Eye } from "lucide-react";
 import { Heart } from "lucide-react";
 import { Rating } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
 import { logFilm } from "@/lib/watched";
 import { toggleLike } from "@/lib/likes";
 import { SerializedUser, SerializedFilm } from "@/types/schemas";
@@ -124,8 +125,8 @@ export default function MovieLogger({
                   <div className="pt-1">
                     <Rating
                       className="scale-125"
-                      icon={<StarIcon />}
-                      emptyIcon={<StarIcon />}
+                      icon={<Star fontSize="inherit" />}
+                      emptyIcon={<StarBorder fontSize="inherit" />}
                       precision={0.5}
                       sx={{
                         "& .MuiRating-icon": {

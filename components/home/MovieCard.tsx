@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { AiFillStar } from "react-icons/ai";
+import StarDisplay from "@/components/ratings/StarDisplay";
 
 interface MovieCardProps {
   id: number;
@@ -48,15 +48,11 @@ const MovieCard = ({
         </p>
 
         <div className="flex flex-row items-center gap-x-1">
-          {Array.from({ length: Math.round(average_rating / 2) }).map(
-            (_, idx) => (
-              <AiFillStar
-                key={idx}
-                className="text-yellow-400 text-sm"
-                aria-label="star"
-              />
-            )
-          )}
+          <StarDisplay
+            rating={average_rating}
+            size={12}
+            className="text-yellow-400"
+          />
 
           <p className="text-xs text-gray-400 font-medium mt-1 ml-auto">
             {release_date ? release_date.split("-")[0] : ""}

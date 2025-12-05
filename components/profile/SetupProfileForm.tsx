@@ -3,17 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 export default function SetupProfileForm({
   email,
   avatar,
+  initialName = "",
+  initialUsername = "",
+  initialBio = "",
 }: {
   email: string;
   avatar?: string;
+  initialName?: string;
+  initialUsername?: string;
+  initialBio?: string;
 }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
+  const [name, setName] = useState(initialName);
+  const [username, setUsername] = useState(initialUsername);
+  const [bio, setBio] = useState(initialBio);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {

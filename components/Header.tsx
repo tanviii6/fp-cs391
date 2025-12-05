@@ -87,7 +87,7 @@ export default function Header() {
                 </nav>
 
                 {/* Auth Buttons */}
-                <div className="relative">
+                <div className="relative flex items-center">
                     {!user && (
                         <button
                             onClick={() => signIn("google")}
@@ -110,7 +110,7 @@ export default function Header() {
                             </button>
 
                             {menuOpen && (
-                                <div className="absolute right-0 mt-3 min-w-[11rem] rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
+                                <div className="absolute top-full right-0 mt-2 min-w-[11rem] rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
                                     <Link
                                         href={username ? `/${username}` : "#"}
                                         className={`block px-3 py-2 text-sm text-slate-200 transition ${
@@ -122,6 +122,16 @@ export default function Header() {
                                         }`}
                                     >
                                         {dbUser ? "Profile" : "Loading..."}
+                                    </Link>
+                                    <Link
+                                        href={
+                                        username
+                                            ? `/${username}/setup`
+                                            : "/setup" 
+                                        }
+                                        className="block px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                                    >
+                                        {username ? "Edit Profile" : "Set Up Profile"}
                                     </Link>
 
                                     <button

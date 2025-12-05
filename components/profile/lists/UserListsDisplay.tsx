@@ -6,17 +6,21 @@ import { ObjectId } from "mongodb";
 
 interface UserListsDisplayProps {
   username: string;
+  limit?: number;
 }
+
 
 // we needed a component which runs on the server and fetches data directly
 export default async function UserListsDisplay({
-  username,
+  username, limit
 }: UserListsDisplayProps) {
   const lists = await getUserLists(username);
+  const limitedLists = limit ? lists.slice(0, limit) : lists;
+
   const filmsCollection = await getFilmsCollection();
 
   const listsWithMovies = await Promise.all(
-    lists.map(async (list) => {
+    limitedLists.map(async (list) => {
       const movies = await filmsCollection
         .find({
           _id: { $in: list.movies.map((id: ObjectId) => new ObjectId(id)) },

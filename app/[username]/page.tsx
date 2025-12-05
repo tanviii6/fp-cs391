@@ -9,6 +9,7 @@ import Image from "next/image";
 import { getUsersCollection, getWatchedCollection } from "@/db";
 import { SerializedUser } from "@/types/schemas";
 import UserListsDisplay from "@/components/profile/lists/UserListsDisplay";
+import Link from "next/link";
 
 
 // this page was styled after the official letterboxd profile page
@@ -104,9 +105,21 @@ export default async function ProfilePage({
         <ProfileNav user={serializedUser} isProfileRoot={true} />
       </div>
       <ProfileContent user={serializedUser} />
-      <div className="mt-10">
-        <UserListsDisplay username={serializedUser.username} />
-      </div>
+      <section className="mt-10 border-t border-[#345] pt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-white">
+            {serializedUser.username}’s Lists
+          </h2>
+          <Link
+            href={`/${serializedUser.username}/lists`}
+            className="text-sm text-[#40bcf4] hover:underline"
+          >
+            View All →
+          </Link>
+        </div>
+        
+        <UserListsDisplay username={serializedUser.username} limit={2} />
+      </section>
     </div>
     
   );

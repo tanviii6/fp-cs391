@@ -37,7 +37,8 @@ export default async function ProfileFilmsPage({
         <ProfileNav user={serializedUser} isProfileRoot={false} />
       </div>
       <div>
-        <ProfileFilmsSection />
+        <ProfileFilmsSection username={serializedUser.username!} />
+
       </div>
     </div>
   );

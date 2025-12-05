@@ -6,6 +6,7 @@ import ProfileFilmsSection from "@/components/profile/ProfileFilmsSection";
 import ProfileNav from "@/components/profile/ProfileNav";
 import { getUsersCollection } from "@/db";
 import { SerializedUser } from "@/types/schemas";
+import { auth } from "@/auth";
 
 export default async function ProfileFilmsPage({
   params,
@@ -16,6 +17,14 @@ export default async function ProfileFilmsPage({
 
   const usersCollection = await getUsersCollection();
   const user = await usersCollection.findOne({ username: username });
+  const session = await auth();
+  const loggedInUserEmail = session?.user?.email || null;
+  const loggedInUser = loggedInUserEmail
+    ? await usersCollection.findOne({ email: loggedInUserEmail })
+    : null;
+
+  const owner = !!user && !!loggedInUser && user._id.toString() === loggedInUser._id.toString();
+
 
   // basic page displaying that user does not exist
   if (!user) {
@@ -37,7 +46,7 @@ export default async function ProfileFilmsPage({
         <ProfileNav user={serializedUser} isProfileRoot={false} />
       </div>
       <div>
-        <ProfileFilmsSection username={serializedUser.username!} />
+        <ProfileFilmsSection username={user.username!} owner={owner} />
 
       </div>
     </div>

@@ -12,10 +12,12 @@ import MovieCard from "@/components/home/MovieCard";
 interface FilmsSectionProps {
   username: string;
   films?: Film[];
+  owner: boolean;
 }
 
 
-export default function ProfileFilmsSection({ username, films }: FilmsSectionProps) {
+
+export default function ProfileFilmsSection({ username, films, owner }: FilmsSectionProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -156,67 +158,66 @@ useEffect(() => {
           />
         </div>
       </div>
-      <div className="h-[72px] w-full relative z-10" ref={searchContainerRef}>
-        <div className="py-5 border-b border-transparent overflow-visible relative z-10">
-          <div className="float-left m-0 relative z-20">
-            <input
-              className="py-2 px-[9px] w-80 bg-[#2c3440] text-[#89a] rounded-xs border-none shadow-[inset_0_-1px_#456] focus:bg-white focus:text-[#234] focus:outline-none"
-              value={filmInput}
-              onChange={(e) => setFilmInput(e.target.value)}
-              placeholder="Search for a movie..."
-              onFocus={() => {
-                if (searchResults.length > 0) setShowResults(true);
-              }}
-            />
-            {showResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 mt-1 w-[320px] max-h-[220px] overflow-y-auto bg-[#2c3440] border border-[#456] rounded-sm shadow-lg z-9999">
-                {isSearching ? (
-                  <div className="p-3 text-[#89a] text-sm text-center">
-                    Searching...
+      {owner && (
+          <div className="h-[72px] w-full relative z-10" ref={searchContainerRef}>
+            <div className="py-5 border-b border-transparent overflow-visible relative z-10">
+              <div className="float-left m-0 relative z-20">
+                <input
+                  className="py-2 px-[9px] w-80 bg-[#2c3440] text-[#89a] rounded-xs border-none shadow-[inset_0_-1px_#456] focus:bg-white focus:text-[#234] focus:outline-none"
+                  value={filmInput}
+                  onChange={(e) => setFilmInput(e.target.value)}
+                  placeholder="Search for a movie..."
+                  onFocus={() => {
+                    if (searchResults.length > 0) setShowResults(true);
+                  }}
+                />
+                {showResults && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 mt-1 w-[320px] max-h-[220px] overflow-y-auto bg-[#2c3440] border border-[#456] rounded-sm shadow-lg z-9999">
+                    {isSearching ? (
+                      <div className="p-3 text-[#89a] text-sm text-center">Searching...</div>
+                    ) : (
+                      <ul className="list-none m-0 p-0">
+                        {searchResults.map((movie) => {
+                          const year = movie.release_date
+                            ? new Date(movie.release_date).getFullYear().toString()
+                            : null;
+                          return (
+                            <li
+                              key={movie.id}
+                              className="px-3 py-2 text-sm text-[#89a] hover:bg-[#3a4450] hover:text-white cursor-pointer border-b border-[#345] last:border-b-0"
+                            >
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <span className="font-medium">{movie.title}</span>
+                                  {year && <span className="text-[#678]"> ({year})</span>}
+                                </div>
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleAddFilm(movie, false)}
+                                    className="bg-[#456] hover:bg-[#678] text-white text-xs px-2 py-1 rounded"
+                                  >
+                                    Watched
+                                  </button>
+                                  <button
+                                    onClick={() => handleAddFilm(movie, true)}
+                                    className="bg-[#00ac1c] hover:bg-[#009d1a] text-white text-xs px-2 py-1 rounded"
+                                  >
+                                    Like
+                                  </button>
+                                </div>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
-                ) : (
-                  <ul className="list-none m-0 p-0">
-                    {searchResults.map((movie) => {
-                      const year = movie.release_date
-                        ? new Date(movie.release_date).getFullYear().toString()
-                        : null;
-                      return (
-                        <li
-                          key={movie.id}
-                          className="px-3 py-2 text-sm text-[#89a] hover:bg-[#3a4450] hover:text-white cursor-pointer border-b border-[#345] last:border-b-0"
-                        >
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <span className="font-medium">{movie.title}</span>
-                              {year && (
-                                <span className="text-[#678]"> ({year})</span>
-                              )}
-                            </div>
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handleAddFilm(movie, false)}
-                                className="bg-[#456] hover:bg-[#678] text-white text-xs px-2 py-1 rounded"
-                              >
-                                Watched
-                              </button>
-                              <button
-                                onClick={() => handleAddFilm(movie, true)}
-                                className="bg-[#00ac1c] hover:bg-[#009d1a] text-white text-xs px-2 py-1 rounded"
-                              >
-                                Like
-                              </button>
-                            </div>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
                 )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+
      
       <div className="mt-8">
         {loadingFilms ? (

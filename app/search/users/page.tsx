@@ -35,13 +35,14 @@ export default function SearchUsersPage() {
       } finally {
         setLoading(false);
       }
-    }, 300); // ⏱ wait 300 ms after typing stops
+    }, 300); 
 
     return () => clearTimeout(timeout);
   }, [query]);
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-10 text-[#9ab]">
+    <div className="w-full">
+    <div className="w-full max-w-3xl mx-auto mt-10 text-[#9ab] min-h-[70vh]">
       <h1 className="text-2xl font-bold text-white mb-6">Search Users</h1>
 
       <div className="flex items-center gap-2 mb-6">
@@ -87,6 +88,7 @@ export default function SearchUsersPage() {
           </Link>
         ))}
       </div>
+    </div>
     </div>
   );
 }

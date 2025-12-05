@@ -32,13 +32,16 @@ export default function Header() {
     const navLinks = useMemo(() => {
         const base = [
             { href: "/", label: "Home" },
-            { href: "/search", label: "Search" },
+            { href: "/search/movies", label: "Search Movies" },
+            { href: "/search/users", label: "Search Users" },
         ];
 
         if (dbUser?.username) {
             base.push(
                 { href: `/${dbUser.username}/lists`, label: "My Lists" },
+                { href: `/${dbUser.username}/films`, label: "My Films" },
                 { href: `/${dbUser.username}/lists/new`, label: "Create List" }
+                
             );
         }
 

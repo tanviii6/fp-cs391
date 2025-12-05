@@ -15,6 +15,7 @@ export default function Header() {
         if (!session?.user?.email) return;
 
         const fetchUser = async () => {
+            if (!session?.user?.email) return;
             const res = await fetch(`/api/users?email=${session.user.email}`);
             if (res.ok) {
                 const user = await res.json();
@@ -75,9 +76,13 @@ export default function Header() {
                             {menuOpen && (
                                 <div className="absolute right-0 mt-2 w-40 rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
                                     <Link
-                                        href={`/${username || "profile"}`}
-                                        className="block px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
-                                    >
+                                        href={username ? `/${username}` : "#"}
+                                        className={`block px-3 py-2 text-sm text-slate-200 transition ${
+                                            username
+                                            ? "hover:bg-slate-800 hover:text-white"
+                                            : "opacity-50 cursor-not-allowed"
+                                        }`}
+                                        >
                                         Profile
                                     </Link>
                                     <button

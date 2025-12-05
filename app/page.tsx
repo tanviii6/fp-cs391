@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
 import MovieCard from "@/components/home/MovieCard";
 import TrendingCarousel from "@/components/home/TrendingCarousel";
 import { TMDBMovieListItem, TMDBSearchResponse } from "@/types/schemas";
 
 async function fetchPopularMovies(
-  page: number = 1
+  page: number = 1,
 ): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
   try {
     const apiKey = process.env.TMDB_API_KEY?.trim();
@@ -47,7 +48,7 @@ async function fetchPopularMovies(
 }
 
 async function fetchTopRatedMovies(
-  page: number = 1
+  page: number = 1,
 ): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
   try {
     const apiKey = process.env.TMDB_API_KEY?.trim();
@@ -101,6 +102,8 @@ export default async function Home() {
   const heroMovie = popularMovies[0];
   const heroBackdrop = heroMovie?.backdrop_path || heroMovie?.poster_path;
 
+  const session = await auth();
+
   return (
     <main className="flex flex-col gap-10 pb-16 pt-10 ">
       <section className="relative overflow-hidden rounded-2xl p-8 text-center shadow-lg shadow-black/25">
@@ -138,12 +141,14 @@ export default async function Home() {
           </p>
         </div>
         <div className="relative mt-5">
-          <Link
-            href="/api/auth/signin"
-            className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition hover:bg-emerald-400"
-          >
-            Sign up / Sign in
-          </Link>
+          {!session && (
+            <Link
+              href="/api/auth/signin"
+              className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition hover:bg-emerald-400"
+            >
+              Sign up / Sign in
+            </Link>
+          )}
         </div>
       </section>
 

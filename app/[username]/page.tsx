@@ -12,8 +12,6 @@ import UserListsDisplay from "@/components/profile/lists/UserListsDisplay";
 import Link from "next/link";
 import UserWatchedDisplay from "@/components/profile/UserWatchedDisplay";
 
-
-
 // this page was styled after the official letterboxd profile page
 export default async function ProfilePage({
   params,
@@ -134,10 +132,9 @@ export default async function ProfilePage({
             View All →
           </Link>
         </div>
-        
+
         <UserListsDisplay username={serializedUser.username} limit={2} />
       </section>
     </div>
-    
   );
 }

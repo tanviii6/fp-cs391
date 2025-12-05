@@ -1,7 +1,7 @@
 "use server";
 
 import { getFilmsCollection } from "@/db";
-import { Film } from "@/types/schemas";
+import { Film, SerializedFilm } from "@/types/schemas";
 
 const FILMS_COLLECTION = await getFilmsCollection();
 
@@ -22,4 +22,58 @@ export async function addFilm(film: Film): Promise<void> {
 
 export async function getFilmByTmdbId(tmdbId: number): Promise<Film | null> {
   return await FILMS_COLLECTION.findOne({ tmdbId });
+}
+
+export async function getOrCreateFilmFromTmdb(
+  tmdbId: number
+): Promise<SerializedFilm | null> {
+  // check if film already exists
+  const film = await getFilmByTmdbId(tmdbId);
+
+  if (film) {
+    return {
+      ...film,
+      _id: film._id?.toString(),
+    };
+  }
+
+  // film doesn't exist, create it
+  const { getMovieDetails } = await import("@/lib/tmdb");
+  const { ObjectId } = await import("mongodb");
+
+  const movieDetails = await getMovieDetails(tmdbId);
+  const releaseYear = movieDetails.release_date
+    ? Number(movieDetails.release_date.split("-")[0])
+    : undefined;
+  const directors =
+    movieDetails.credits?.crew?.filter((person) => person.job === "Director") ||
+    [];
+
+  const newFilm: Film = {
+    _id: new ObjectId(),
+    tmdbId: movieDetails.id,
+    title: movieDetails.title,
+    releaseYear: releaseYear,
+    posterUrl: movieDetails.poster_path
+      ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
+      : undefined,
+    directors: directors,
+    synopsis: movieDetails.overview,
+    runtimeMinutes: movieDetails.runtime,
+    genres: movieDetails.genres,
+    averageRating: movieDetails.vote_average,
+    totalRatings: movieDetails.vote_count,
+  };
+
+  await addFilm(newFilm);
+  const createdFilm = await getFilmByTmdbId(tmdbId);
+
+  if (!createdFilm) {
+    return null;
+  }
+
+  return {
+    ...createdFilm,
+    _id: createdFilm._id?.toString(),
+  };
 }

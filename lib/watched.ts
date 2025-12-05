@@ -1,14 +1,14 @@
 "use server";
 
 import { getWatchedCollection } from "@/db";
-import { Film, User, Watched } from "@/types/schemas";
+import { Watched } from "@/types/schemas";
 import { ObjectId } from "mongodb";
 
 const WATCHED_COLLECTION = await getWatchedCollection();
 
 export async function getLoggedFilm(
   userId: ObjectId,
-  filmId: ObjectId,
+  filmId: ObjectId
 ): Promise<Watched | void> {
   const loggedFilm = await WATCHED_COLLECTION.findOne({
     userId: userId,
@@ -25,7 +25,7 @@ export async function getLoggedFilm(
 export async function logFilm(
   filmId: string,
   userId: string,
-  rating?: number,
+  rating?: number
 ): Promise<{ success: boolean }> {
   try {
     const filmObjectId = new ObjectId(filmId);
@@ -42,7 +42,7 @@ export async function logFilm(
       // logged film already exists, just update rating
       await WATCHED_COLLECTION.updateOne(
         { userId: userObjectId, filmId: filmObjectId },
-        { $set: { rating: rating } },
+        { $set: { rating: rating } }
       );
       return { success: true };
     } else {
@@ -64,25 +64,31 @@ export async function logFilm(
   }
 }
 
-export async function favoriteFilm(film: Film, user: User): Promise<void> {
+export async function favoriteFilm(
+  filmId: string,
+  userId: string
+): Promise<void> {
   try {
+    const filmObjectId = new ObjectId(filmId);
+    const userObjectId = new ObjectId(userId);
+
     const loggedFilm: Watched | null = await WATCHED_COLLECTION.findOne({
-      userId: user._id,
-      filmId: film._id,
+      userId: userObjectId,
+      filmId: filmObjectId,
     });
 
     if (loggedFilm) {
       await WATCHED_COLLECTION.updateOne(
-        { userId: user._id, filmId: film._id },
-        { $set: { isFavorite: true } },
+        { userId: userObjectId, filmId: filmObjectId },
+        { $set: { isFavorite: true } }
       );
       console.log("previously logged film favorited");
     } else {
       // film hasn't been logged, so we'll add with undefined rating
       await WATCHED_COLLECTION.insertOne({
         _id: new ObjectId(),
-        userId: user._id!,
-        filmId: film._id!,
+        userId: userObjectId,
+        filmId: filmObjectId,
         rating: undefined,
         isFavorite: true,
         loggedAt: new Date(),

@@ -1,3 +1,7 @@
+/** 
+ * Created by: Jude Hosmer + Ron Bajrami
+ * Search page displaying popular movies and a search component.
+ */
 import MovieSearch from "@/components/home/MovieSearch";
 import { TMDBMovieListItem } from "@/types/schemas";
 

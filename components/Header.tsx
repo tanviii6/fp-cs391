@@ -1,3 +1,8 @@
+/** 
+ * Created by: Jude Hosmer + Charlie Howard
+ * Header component with navigation and authentication buttons.
+ */
+
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -12,7 +17,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dbUser, setDbUser] = useState<{ username?: string } | null>(null);
 
-  // Fetch the user from the DB on the client
+  // Pull the user's DB profile once session has an email so we can show personalized links.
   useEffect(() => {
     if (!session?.user?.email) return;
 
@@ -29,6 +34,7 @@ export default function Header() {
     fetchUser();
   }, [session?.user?.email]);
 
+  // Build navigation once we know if the user has a username for personalized routes.
   const navLinks = useMemo(() => {
     const base = [
       { href: "/", label: "Home" },
@@ -118,6 +124,7 @@ export default function Header() {
                 />
               </button>
 
+              {/* Lightweight user dropdown; avoids rendering until we have a session */}
               {menuOpen && (
                 <div className="absolute top-full right-0 mt-2 min-w-[11rem] rounded-md border border-slate-700 bg-[#0f1318] p-2 shadow-lg shadow-black/40">
                   <Link

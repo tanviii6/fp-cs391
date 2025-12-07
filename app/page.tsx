@@ -1,3 +1,7 @@
+/** 
+ * Created by: Jude Hosmer + Ron Bajrami
+ * Home page displaying hero, trending carousel, and highest rated grid.
+ */
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/auth";
@@ -5,6 +9,7 @@ import MovieCard from "@/components/home/MovieCard";
 import TrendingCarousel from "@/components/home/TrendingCarousel";
 import { TMDBMovieListItem, TMDBSearchResponse } from "@/types/schemas";
 
+// Fetch popular titles from TMDB for the hero and trending carousel.
 async function fetchPopularMovies(
   page: number = 1,
 ): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
@@ -47,6 +52,7 @@ async function fetchPopularMovies(
   }
 }
 
+// Fetch top rated titles for the grid section.
 async function fetchTopRatedMovies(
   page: number = 1,
 ): Promise<TMDBSearchResponse<TMDBMovieListItem>> {
@@ -99,6 +105,7 @@ export default async function Home() {
   const popularPage = popularData.page || 1;
   const popularTotalPages = popularData.total_pages;
   const highestRated = (topRatedData.results || []).slice(0, 10);
+  // Use the first popular movie as the landing hero.
   const heroMovie = popularMovies[0];
   const heroBackdrop = heroMovie?.backdrop_path || heroMovie?.poster_path;
 

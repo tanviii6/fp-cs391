@@ -1,3 +1,7 @@
+/** 
+ * Created by: Jude Hosmer 
+ * component for showing movie information in a card format
+ */
 "use client";
 
 import Link from "next/link";
@@ -23,11 +27,13 @@ const MovieCard = ({
   overview,
   overviewMaxLength,
 }: MovieCardProps) => {
+  // Trim overview for dense grids while preserving a hint of context.
   const displayOverview =
     overviewMaxLength && overview.length > overviewMaxLength
       ? `${overview.slice(0, overviewMaxLength).trim()}...`
       : overview;
 
+  /** Renders a movie card with poster, title, rating, release year, and overview */
   return (
     <Link href={`/movies/${id}`} className="block w-44 cursor-pointer">
       <div className="flex h-full flex-col">
@@ -35,6 +41,7 @@ const MovieCard = ({
           src={
             poster_path
               ? `https://image.tmdb.org/t/p/w500${poster_path}`
+              // Fallback placeholder keeps layout consistent when no poster exists.
               : "https://placehold.co/600x400/1a1a1a/ffffff.png"
           }
           alt={title}

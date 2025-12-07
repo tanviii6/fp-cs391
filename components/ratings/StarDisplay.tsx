@@ -1,9 +1,14 @@
+/**
+ * Created by: Jude Hosmer
+ * Stateless star display component for showing ratings with support for half stars.
+ */
+
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 
 type StarDisplayProps = {
-    /** Rating value on a 0–10 scale (default TMDB scale). */
+    /** Rating value on a 0–10 scale */
     rating: number;
-    /** Maximum rating value; defaults to 10 to match TMDB. */
+    /** Maximum rating value, defaults to 10 to match TMDB api. */
     scale?: number;
     /** Size of each star icon in pixels. */
     size?: number;
@@ -28,9 +33,11 @@ export default function StarDisplay({
     const hasHalfStar = rounded - fullStars >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
+    /** Renders star icons based on calculated full, half, and empty stars */
     return (
         <div className={`flex items-center gap-1 text-amber-400 ${className}`}>
             {Array.from({ length: fullStars }).map((_, idx) => (
+                
                 <FaStar key={`full-${idx}`} size={size} aria-hidden />
             ))}
             {hasHalfStar && <FaStarHalfAlt size={size} aria-hidden />}

@@ -1,5 +1,5 @@
 /*
-  Created By: Ron
+  Created By: Ron Bajrami + Jude Hosmer
 */
 
 import Image from "next/image";

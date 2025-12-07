@@ -1,3 +1,7 @@
+/** 
+ * Created by: Jude Hosmer 
+ * Navigation search component with debounced input and dynamic results.
+ */
 "use client";
 
 import Link from "next/link";
@@ -16,7 +20,7 @@ export default function NavSearch() {
       setResults([]);
       return;
     }
-
+    // Debounce search input
     const controller = new AbortController();
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
@@ -44,7 +48,7 @@ export default function NavSearch() {
       clearTimeout(timeoutId);
     };
   }, [query]);
-
+// Renders the navigation search input and results dropdown
   return (
     <div className="relative hidden items-center gap-2 md:flex">
       <input
@@ -66,6 +70,7 @@ export default function NavSearch() {
                 const year = movie.release_date
                   ? new Date(movie.release_date).getFullYear()
                   : undefined;
+                  // Renders each movie result as a link in the dropdown
                 return (
                   <li key={movie.id}>
                     <Link

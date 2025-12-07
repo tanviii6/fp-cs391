@@ -1,3 +1,7 @@
+/** 
+ * Created by: Jude Hosmer
+ * Movie search component with debounced input and dynamic results.
+ */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -16,11 +20,13 @@ export default function MovieSearch({ initialMovies }: MovieSearchProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Switch between default and search headings as the query changes.
   const headline = useMemo(
     () => (query.trim() ? "Search results" : "Popular right now"),
     [query],
   );
 
+  // Debounce searches and cancel in-flight requests when query changes.
   useEffect(() => {
     if (!query.trim()) {
       setMovies(initialMovies);

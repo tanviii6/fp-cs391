@@ -5,6 +5,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
+import Autoplay from "embla-carousel-autoplay"
 import MovieCard from "@/components/home/MovieCard"
 import {
   Carousel,
@@ -26,6 +27,10 @@ export default function TrendingCarousel({
   initialPage,
   totalPages,
 }: Props) {
+  // Keep autoplay stable between renders.
+  const autoplay = useRef(
+    Autoplay({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true })
+  )
   // All movies currently shown
   const [movies, setMovies] = useState(initialMovies)
 
@@ -93,7 +98,11 @@ export default function TrendingCarousel({
   return (
     <div className="relative">
       {/* Main carousel */}
-      <Carousel opts={{ align: "start" }} className="w-full">
+      <Carousel
+        opts={{ align: "start", loop: true }}
+        plugins={[autoplay.current]}
+        className="w-full"
+      >
         <CarouselContent className="gap-6">
           {/* If no movies exist */}
           {movies.length === 0 && (

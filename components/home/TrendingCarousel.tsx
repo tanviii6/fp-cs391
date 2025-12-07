@@ -34,18 +34,19 @@ export default function TrendingCarousel({
   // All movies currently shown
   const [movies, setMovies] = useState(initialMovies)
 
-  // Keep track of pagination
+  // Track which TMDB page we are on and if there are more pages to load
   const [page, setPage] = useState(initialPage)
   const [hasMore, setHasMore] = useState(initialPage < totalPages)
 
-  // Loading and error states
+  // Loading and error states for infinite scroll
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // This div tells us when the user scrolls to the end
+  // This div tells us when the user scrolls to the end (points to the small loader div at the end of the carousel)
+  // When it scrolls into view, we try to load more movies
   const loaderRef = useRef<HTMLDivElement | null>(null)
 
-  // Load more movies when the loader div becomes visible
+  // Load more movies when the loader div becomes visible 
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return
 
@@ -65,7 +66,7 @@ export default function TrendingCarousel({
       setMovies(prev => [...prev, ...newMovies])
       setPage(nextPage)
 
-      // Stop loading once we reach the final page
+      // Stop loading once we reach the final page from TMDB
       if (nextPage >= data.total_pages) {
         setHasMore(false)
       }
@@ -77,7 +78,8 @@ export default function TrendingCarousel({
     }
   }, [page, hasMore, isLoading])
 
-  // Intersection Observer detects when loaderRef is on screen
+  // Watch the loaderRef with IntersectionObserver
+  // When it comes into view, we call loadMore to fetch the next page
   useEffect(() => {
     const target = loaderRef.current
     if (!target) return

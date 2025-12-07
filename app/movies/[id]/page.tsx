@@ -18,7 +18,7 @@ import type { Film, TMDBCastMember, TMDBCrewMember } from "@/types/schemas"
 import { ObjectId } from "mongodb"
 
 type MoviePageProps = {
-  // In this Next version params and searchParams are Promises on this async route
+  // In this Next version params and searchParams are Promises on this async route, so we await them at the top of the component
   params: Promise<{ id: string }>
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
@@ -32,6 +32,7 @@ const sectionLinks = [
 ]
 
 export default async function MoviePage({ params, searchParams }: MoviePageProps) {
+  // Wait for the route params and query string info
   const { id } = await params
   const resolvedSearchParams = (await searchParams) ?? {}
 
@@ -44,6 +45,7 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
   const currentSection = validSections.includes(section) ? section : "cast"
 
   // Simple flags to control if we show the full cast or crew lists
+  // These come from the query string as showAllCast and showAllCrew
   const rawShowAllCast = resolvedSearchParams["showAllCast"]
   const rawShowAllCrew = resolvedSearchParams["showAllCrew"]
 
@@ -105,7 +107,7 @@ export default async function MoviePage({ params, searchParams }: MoviePageProps
     }
   }
 
-  // By default only show the first 20 cast and crew entries
+  // By default only show the first 20 cast and crew entries. Only show the first 20 cast/crew on the page unless the user requests "show all"
   const visibleCast = showAllCast ? cast : cast.slice(0, 20)
   const visibleCrew = showAllCrew ? crew : crew.slice(0, 20)
 

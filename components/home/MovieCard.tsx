@@ -40,10 +40,10 @@ const MovieCard = ({
           alt={title}
           width={500}
           height={750}
-          className="aspect-[2/3] h-auto w-full rounded-lg object-cover"
+          className="aspect-2/3 h-auto w-full rounded-lg object-cover"
         />
 
-        <p className="mt-2 min-h-[2.5rem] text-sm font-bold text-white line-clamp-2">
+        <p className="mt-2 min-h-10 text-sm font-bold text-white line-clamp-2">
           {title}
         </p>
 
@@ -60,7 +60,7 @@ const MovieCard = ({
         </div>
 
         <div className="flex flex-row items-center justify-between">
-          <p className="ml-1 mt-1 min-h-[2.75rem] text-xs font-medium text-gray-400 line-clamp-2">
+          <p className="ml-1 mt-1 min-h-11 text-xs font-medium text-gray-400 line-clamp-2">
             {displayOverview}
           </p>
         </div>

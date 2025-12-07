@@ -154,7 +154,7 @@ export default async function MoviePage({
         ) : (
           <div className="absolute inset-0 bg-[#0f1318]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#14181C] via-[#14181C]/75 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#14181C] via-[#14181C]/75 to-transparent" />
 
         <div className="absolute top-0 left-0 z-20 w-full px-6 py-6">
           <div className="mx-auto flex max-w-6xl items-center justify-between">

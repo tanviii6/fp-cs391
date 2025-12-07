@@ -1,205 +1,147 @@
-"use client";
+/*
+  Created By: Ron
+*/
 
-import { useCallback, useEffect, useRef, useState } from "react";
+"use client"
 
-import { TMDBMovieListItem, TMDBSearchResponse } from "@/types/schemas";
-import MovieCard from "./MovieCard";
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import MovieCard from "@/components/home/MovieCard"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { TMDBMovieListItem, TMDBSearchResponse } from "@/types/schemas"
 
-interface TrendingCarouselProps {
-  initialMovies: TMDBMovieListItem[];
-  initialPage?: number;
-  totalPages?: number;
+interface Props {
+  initialMovies: TMDBMovieListItem[]
+  initialPage: number
+  totalPages: number
 }
 
-const TrendingCarousel = ({
+export default function TrendingCarousel({
   initialMovies,
-  initialPage = 1,
+  initialPage,
   totalPages,
-}: TrendingCarouselProps) => {
-  const [movies, setMovies] = useState<TMDBMovieListItem[]>(
-    initialMovies ?? [],
-  );
-  const [page, setPage] = useState(initialPage);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(() => {
-    if (typeof totalPages === "number") {
-      return totalPages > 0 && initialPage < totalPages;
-    }
-    return true;
-  });
-  const [error, setError] = useState<string | null>(null);
+}: Props) {
+  // All movies currently shown
+  const [movies, setMovies] = useState(initialMovies)
 
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Keep track of pagination
+  const [page, setPage] = useState(initialPage)
+  const [hasMore, setHasMore] = useState(initialPage < totalPages)
 
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // This div tells us when the user scrolls to the end
+  const loaderRef = useRef<HTMLDivElement | null>(null)
+
+  // Load more movies when the loader div becomes visible
   const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore) return
 
-    const nextPage = page + 1;
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const res = await fetch(`/api/movies/popular?page=${nextPage}`);
-      if (!res.ok) {
-        throw new Error(`Failed to load page ${nextPage}`);
-      }
+      const nextPage = page + 1
+      const res = await fetch(`/api/movies/popular?page=${nextPage}`)
 
-      const data: TMDBSearchResponse<TMDBMovieListItem> | undefined =
-        await res.json();
-      const newResults = data?.results ?? [];
+      if (!res.ok) throw new Error("Could not load more movies")
 
-      setMovies((prev) => [...prev, ...newResults]);
-      const currentPage = data?.page ?? nextPage;
-      setPage(currentPage);
+      const data: TMDBSearchResponse<TMDBMovieListItem> = await res.json()
+      const newMovies = data.results ?? []
 
-      const total = data?.total_pages;
-      if (
-        newResults.length === 0 ||
-        (typeof total === "number" && currentPage >= total)
-      ) {
-        setHasMore(false);
+      // Add new movies to the list
+      setMovies(prev => [...prev, ...newMovies])
+      setPage(nextPage)
+
+      // Stop loading once we reach the final page
+      if (nextPage >= data.total_pages) {
+        setHasMore(false)
       }
     } catch (err) {
-      console.error(err);
-      setError("Unable to load more movies right now.");
+      console.error(err)
+      setError("Error loading more movies")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [hasMore, isLoading, page]);
+  }, [page, hasMore, isLoading])
 
-  const scrollByOneCard = useCallback((direction: "next" | "prev") => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const firstCard = container.querySelector<HTMLElement>("[data-card]");
-    if (!firstCard) return;
-
-    const gap = 24; // matches tailwind gap-6 (1.5rem)
-    const cardWidth = firstCard.getBoundingClientRect().width + gap;
-    const offset = direction === "next" ? cardWidth : -cardWidth;
-    container.scrollBy({ left: offset, behavior: "smooth" });
-  }, []);
-
+  // Intersection Observer detects when loaderRef is on screen
   useEffect(() => {
-    const target = loaderRef.current;
-    const root = scrollContainerRef.current;
-    if (!target || !root) return;
+    const target = loaderRef.current
+    if (!target) return
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0].isIntersecting) {
-          loadMore();
+          loadMore()
         }
       },
-      { root, rootMargin: "200px" },
-    );
+      { rootMargin: "200px" } // load movies a bit before you reach the end
+    )
 
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [loadMore]);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current);
-    }
-
-    autoScrollRef.current = setInterval(() => {
-      const firstCard = container.querySelector<HTMLElement>("[data-card]");
-      if (!firstCard) return;
-
-      const gap = 24; // matches tailwind gap-6 (1.5rem)
-      const cardWidth = firstCard.getBoundingClientRect().width + gap;
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      const nextLeft = container.scrollLeft + cardWidth;
-
-      if (nextLeft >= maxScroll - 2) {
-        if (hasMore) {
-          container.scrollBy({ left: cardWidth, behavior: "smooth" });
-        } else {
-          container.scrollTo({ left: 0, behavior: "smooth" });
-        }
-      } else {
-        container.scrollBy({ left: cardWidth, behavior: "smooth" });
-      }
-    }, 3500);
-
-    return () => {
-      if (autoScrollRef.current) {
-        clearInterval(autoScrollRef.current);
-      }
-    };
-  }, [hasMore, movies.length]);
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [loadMore])
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => scrollByOneCard("prev")}
-          className="rounded-full bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-white/20"
-          aria-label="Scroll to previous"
-        >
-          {"<"}
-        </button>
-
-        <div
-          ref={scrollContainerRef}
-          className="flex w-full items-stretch gap-6 overflow-x-auto scroll-smooth"
-        >
-          {movies.length === 0 ? (
-            <p className="text-center text-slate-300">No movies found.</p>
-          ) : (
-            <>
-              {movies.map((movie) => (
-                <div
-                  key={movie.id}
-                  data-card
-                  className="min-w-[11rem] shrink-0 snap-start"
-                >
-                  <MovieCard
-                    id={movie.id}
-                    poster_path={movie.poster_path}
-                    title={movie.title}
-                    average_rating={movie.vote_average}
-                    release_date={movie.release_date}
-                    overview={movie.overview}
-                    overviewMaxLength={60}
-                  />
-                </div>
-              ))}
-              <div ref={loaderRef} className="min-w-[1px]" />
-            </>
+      {/* Main carousel */}
+      <Carousel opts={{ align: "start" }} className="w-full">
+        <CarouselContent className="gap-6">
+          {/* If no movies exist */}
+          {movies.length === 0 && (
+            <CarouselItem className="basis-full">
+              <p className="text-center text-slate-300">No movies found</p>
+            </CarouselItem>
           )}
-        </div>
 
-        <button
-          type="button"
-          onClick={() => scrollByOneCard("next")}
-          className="rounded-full bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-white/20"
-          aria-label="Scroll to next"
-        >
-          {">"}
-        </button>
-      </div>
+          {/* Render each movie inside a slide */}
+          {movies.map(movie => (
+            <CarouselItem
+              key={movie.id}
+              className="basis-44 shrink-0 snap-start"
+            >
+              <MovieCard
+                id={movie.id}
+                poster_path={movie.poster_path}
+                title={movie.title}
+                average_rating={movie.vote_average}
+                release_date={movie.release_date}
+                overview={movie.overview}
+                overviewMaxLength={60}
+              />
+            </CarouselItem>
+          ))}
 
+          {/* Loader placeholder to trigger infinite scroll */}
+          {hasMore && (
+            <CarouselItem className="basis-auto">
+              <div ref={loaderRef} className="min-w-px" />
+            </CarouselItem>
+          )}
+        </CarouselContent>
+
+        {/* Shadcn UI arrows */}
+        <CarouselPrevious className="rounded-full bg-white/10 text-white hover:bg-white/20" />
+        <CarouselNext className="rounded-full bg-white/10 text-white hover:bg-white/20" />
+      </Carousel>
+
+      {/* Loading status */}
       <div className="mt-2 text-center text-sm text-slate-400">
-        {isLoading
-          ? "Loading more..."
-          : !hasMore && movies.length > 0
-            ? "You’re all caught up."
-            : null}
+        {isLoading ? "Loading more..." : !hasMore ? "You are all caught up" : ""}
       </div>
 
-      {error ? (
+      {/* Error message */}
+      {error && (
         <p className="text-center text-sm text-red-400">{error}</p>
-      ) : null}
+      )}
     </div>
-  );
-};
-
-export default TrendingCarousel;
+  )
+}

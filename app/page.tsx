@@ -123,11 +123,11 @@ export default async function Home() {
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0f1318]/85 via-[#0f1318]/75 to-[#0f1318]/90" />
+            <div className="absolute inset-0 bg-linear-to-b from-[#0f1318]/85 via-[#0f1318]/75 to-[#0f1318]/90" />
           </>
         )}
         {!heroBackdrop && (
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-900/80 to-neutral-800" />
+          <div className="absolute inset-0 bg-linear-to-b from-neutral-900 via-neutral-900/80 to-neutral-800" />
         )}
         <div className="relative flex flex-col items-center gap-3 text-center">
           <Image

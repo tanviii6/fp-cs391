@@ -1,94 +1,79 @@
 /*
-  Created By: Ron Bajrami + Jude Hosmer
+  Created By: Ron Bajrami and Jude Hosmer
+  Movie page for a single film. Basically fetches data from TMDB, save a film record, and show tabs for cast, crew, details, and links
 */
 
-import Image from "next/image";
-import Link from "next/link";
-import MovieLogger from "@/components/movies/MovieLogger";
-import StarDisplay from "@/components/ratings/StarDisplay";
-import { notFound } from "next/navigation";
-import { auth } from "@/auth";
-import { addFilm, getFilmByTmdbId } from "@/lib/films";
-import { isFilmLiked } from "@/lib/likes";
-import { getMovieDetails } from "@/lib/tmdb";
-import { getCurrentUser } from "@/lib/users";
-import { getLoggedFilm } from "@/lib/watched";
-import type { Film, TMDBCastMember, TMDBCrewMember } from "@/types/schemas";
-import { ObjectId } from "mongodb";
-
-type SectionKey = "cast" | "crew" | "details" | "links" | "genres";
+import Image from "next/image"
+import Link from "next/link"
+import MovieLogger from "@/components/movies/MovieLogger"
+import StarDisplay from "@/components/ratings/StarDisplay"
+import { notFound } from "next/navigation"
+import { auth } from "@/auth"
+import { addFilm, getFilmByTmdbId } from "@/lib/films"
+import { isFilmLiked } from "@/lib/likes"
+import { getMovieDetails } from "@/lib/tmdb"
+import { getCurrentUser } from "@/lib/users"
+import { getLoggedFilm } from "@/lib/watched"
+import type { Film, TMDBCastMember, TMDBCrewMember } from "@/types/schemas"
+import { ObjectId } from "mongodb"
 
 type MoviePageProps = {
+  // In this Next version params and searchParams are Promises on this async route
   params: Promise<{ id: string }>
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-
-
+// Config for the simple tab navigation
 const sectionLinks = [
   { key: "cast", label: "Cast" },
   { key: "crew", label: "Crew" },
   { key: "details", label: "Details" },
   { key: "links", label: "Links" },
-] as const;
+]
 
-export default async function MoviePage({
-  params,
-  searchParams,
-}: MoviePageProps) {
-  // Next gives these as promises on this async route, so unwrap once here
+export default async function MoviePage({ params, searchParams }: MoviePageProps) {
   const { id } = await params
   const resolvedSearchParams = (await searchParams) ?? {}
 
-  // grab stuff from the url (tabs + whether to expand cast/crew)
-  // I wrap this in a tiny helper because query params can come in as arrays
-  const pickParam = (key: string) => {
-    const value = resolvedSearchParams[key]
-    return Array.isArray(value) ? value[0] : value
+  // Figure out which section tab should be active, default to cast
+  const rawSection = resolvedSearchParams["section"]
+  const section =
+    typeof rawSection === "string" ? rawSection.toLowerCase() : "cast"
+
+  const validSections = ["cast", "crew", "details", "links"]
+  const currentSection = validSections.includes(section) ? section : "cast"
+
+  // Simple flags to control if we show the full cast or crew lists
+  const rawShowAllCast = resolvedSearchParams["showAllCast"]
+  const rawShowAllCrew = resolvedSearchParams["showAllCrew"]
+
+  const showAllCast =
+    typeof rawShowAllCast === "string" && rawShowAllCast === "1"
+  const showAllCrew =
+    typeof rawShowAllCrew === "string" && rawShowAllCrew === "1"
+
+  // Check if a user is logged in, used for likes and watched status
+  const session = await auth()
+  const userEmail = session?.user?.email ?? null
+  const user = userEmail ? await getCurrentUser(userEmail) : undefined
+
+  // Fetch movie info from TMDB
+  const movie = await getMovieDetails(id).catch(() => null)
+
+  if (!movie) {
+    notFound()
   }
 
+  // Basic fields for the UI
+  const releaseYear = movie.release_date?.split("-")[0]
+  const crew = movie.credits?.crew ?? []
+  const cast = movie.credits?.cast ?? []
+  const directors = crew.filter((member: TMDBCrewMember) => member.job === "Director")
 
-  // this sets which tab we show; defaults to cast
-  const sectionParam = (pickParam("section") || "cast").toLowerCase();
-  const currentSection: SectionKey = ["cast", "crew", "details", "links", "genres"].includes(
-    sectionParam as SectionKey,
-  )
-    ? (sectionParam as SectionKey)
-    : "cast";
-  // query params drive the "show all" toggles so I can keep state in the URL
-  const showAllCast = pickParam("showAllCast") === "1";
-  const showAllCrew = pickParam("showAllCrew") === "1";
+  // Studios for the details tab
+  const studios = movie.production_companies ?? []
 
-  // see if a user is logged in (needed for likes/logs)
-  const session = await auth();
-  const userEmail = session?.user?.email ?? null;
-  const user = userEmail ? await getCurrentUser(userEmail) : undefined;
-
-  // fetch movie info (only hit the Next.js 404 page if TMDB actually says 404)
-  let movie;
-  try {
-    movie = await getMovieDetails(id);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "";
-    if (msg.includes("404")) {
-      notFound();
-    }
-    throw err; // otherwise bubble up the real error
-  }
-  if (!movie) return null;
-  // pull useful fields out for the UI
-  const releaseYear = movie.release_date?.split("-")[0];
-  const crew = movie.credits?.crew ?? [];
-  const cast = movie.credits?.cast ?? [];
-  const directors = crew.filter((member: TMDBCrewMember) => member.job === "Director");
-
-  const studiosRaw = movie.production_companies ?? [];
-  const filteredStudios = studiosRaw.filter(
-    (company) => company.name?.trim() !== "Walt Disney Animation Studios"
-  );
-  const studios = filteredStudios.length ? filteredStudios : studiosRaw;
-
-  // stash this movie in our DB so the logger has an ID to work with
+  // Film record we store in Mongo so the logger has an id to work with
   const filmRecord: Film = {
     _id: new ObjectId(),
     tmdbId: movie.id,
@@ -101,30 +86,30 @@ export default async function MoviePage({
     genres: movie.genres,
     averageRating: movie.vote_average,
     totalRatings: movie.vote_count,
-  };
-
-  await addFilm(filmRecord);
-  const actualFilm = await getFilmByTmdbId(movie.id);
-
-  // prefill the MovieLogger with the user's existing state
-  let initialData = undefined;
-  if (user?._id && actualFilm?._id) {
-    const [loggedFilm, liked] = await Promise.all([
-      getLoggedFilm(user._id, actualFilm._id),
-      isFilmLiked(actualFilm._id.toString(), user._id.toString()),
-    ]);
-
-    initialData = {
-      isWatched: !!loggedFilm,
-      isLiked: liked,
-      rating: loggedFilm?.rating || 0,
-    };
   }
 
-  const visibleCast = showAllCast ? cast : cast.slice(0, 20);
-  const visibleCrew = showAllCrew ? crew : crew.slice(0, 20);
+  // Save film, then read it back to get the real Mongo id
+  await addFilm(filmRecord)
+  const actualFilm = await getFilmByTmdbId(movie.id)
 
-  // quick list of details to render in the grid
+  // Prefill MovieLogger with watched status, like, and rating for this user and film
+  let initialData: { isWatched: boolean; isLiked: boolean; rating: number } | undefined
+  if (user?._id && actualFilm?._id) {
+    const loggedFilm = await getLoggedFilm(user._id, actualFilm._id)
+    const liked = await isFilmLiked(actualFilm._id.toString(), user._id.toString())
+
+    initialData = {
+      isWatched: Boolean(loggedFilm),
+      isLiked: liked,
+      rating: loggedFilm?.rating || 0,
+    }
+  }
+
+  // By default only show the first 20 cast and crew entries
+  const visibleCast = showAllCast ? cast : cast.slice(0, 20)
+  const visibleCrew = showAllCrew ? crew : crew.slice(0, 20)
+
+  // Data for the Details tab
   const detailItems = [
     {
       label: "Languages",
@@ -136,12 +121,11 @@ export default async function MoviePage({
       value: movie.production_countries?.map((c) => c.name).join(", ") || "N/A",
     },
     { label: "Status", value: movie.status },
-  ];
+  ]
 
   return (
-    <div className="min-h-screen bg-[#14181C] text-slate-50 font-sans selection:bg-emerald-500/30">
-      {/* backdrop hero + back button (dark theme vibes, emerald accents) */}
-      {/* I layer the image + gradient to keep text readable on top of the backdrop */}
+    <div className="min-h-screen bg-[#14181C] text-slate-50 font-sans">
+      {/* Backdrop hero at the top with a gradient layer to keep text readable */}
       <div className="relative h-[500px] w-full">
         {movie.backdrop_path ? (
           <Image
@@ -154,8 +138,10 @@ export default async function MoviePage({
         ) : (
           <div className="absolute inset-0 bg-[#0f1318]" />
         )}
+
         <div className="absolute inset-0 bg-linear-to-t from-[#14181C] via-[#14181C]/75 to-transparent" />
 
+        {/* Simple back link bar at the top */}
         <div className="absolute top-0 left-0 z-20 w-full px-6 py-6">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
             <Link
@@ -168,9 +154,9 @@ export default async function MoviePage({
         </div>
       </div>
 
-      {/* poster, text info, and logger card (two columns on desktop, stacked on mobile) */}
-      {/* gap/rounded/shadow are just Tailwind utility combos to pop the card off the dark background */}
+      {/* Main content area to show poster, info, and the MovieLogger card */}
       <div className="relative z-10 mx-auto -mt-64 flex max-w-6xl flex-col gap-8 px-6 pb-20 md:flex-row md:items-start">
+        {/* Poster column */}
         <div className="shrink-0">
           <div className="relative aspect-2/3 w-[200px] overflow-hidden rounded-lg bg-slate-900 shadow-xl">
             <Image
@@ -188,7 +174,9 @@ export default async function MoviePage({
           </div>
         </div>
 
+        {/* Info plus logger column */}
         <div className="flex flex-row">
+          {/* Text info on the left */}
           <div className="flex flex-1 flex-col pt-4 text-slate-100 md:pt-12">
             <h1 className="mb-2 text-4xl font-bold leading-tight md:text-5xl">
               {movie.title}
@@ -243,6 +231,7 @@ export default async function MoviePage({
             </p>
           </div>
 
+          {/* MovieLogger component so the user can mark watched, liked, and rate */}
           <MovieLogger
             user={user ? { ...user, _id: user._id?.toString() } : undefined}
             film={{ ...filmRecord, _id: actualFilm?._id?.toString() }}
@@ -251,12 +240,11 @@ export default async function MoviePage({
         </div>
       </div>
 
-      {/* tabs + tab content (underline for active tab, keep spacing tight with max width) */}
-      {/* using border-bottom + text color swap instead of fancy components to keep it simple */}
+      {/* Tab navigation with content for cast, crew, details, and links */}
       <div className="mx-auto max-w-6xl px-6 pb-24" id="sections">
         <nav className="mb-8 flex gap-6 border-b border-slate-800 pb-1">
           {sectionLinks.map((item) => {
-            const isActive = currentSection === item.key;
+            const isActive = currentSection === item.key
             return (
               <Link
                 key={item.key}
@@ -269,11 +257,12 @@ export default async function MoviePage({
               >
                 {item.label}
               </Link>
-            );
+            )
           })}
         </nav>
 
         <div className="min-h-[200px]">
+          {/* Cast tab */}
           {currentSection === "cast" && (
             <div>
               <div className="flex flex-wrap gap-x-2 gap-y-2">
@@ -313,6 +302,7 @@ export default async function MoviePage({
             </div>
           )}
 
+          {/* Crew tab */}
           {currentSection === "crew" && (
             <div>
               <div className="flex flex-wrap gap-x-2 gap-y-2">
@@ -323,7 +313,7 @@ export default async function MoviePage({
                       className="inline-flex items-center rounded border border-[#2c3542] bg-[#1c2430] px-2 py-1 text-xs text-slate-200 shadow-sm"
                     >
                       <span className="mr-1 text-slate-50">{member.name}</span>
-                      {member.job && <span className="text-slate-400"> — {member.job}</span>}
+                      {member.job && <span className="text-slate-400"> - {member.job}</span>}
                     </span>
                   ))
                 ) : (
@@ -347,6 +337,7 @@ export default async function MoviePage({
             </div>
           )}
 
+          {/* Details tab */}
           {currentSection === "details" && (
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {detailItems.map((item) => (
@@ -360,6 +351,7 @@ export default async function MoviePage({
             </div>
           )}
 
+          {/* Links tab */}
           {currentSection === "links" && (
             <div className="flex gap-4">
               {movie.homepage && (
@@ -387,5 +379,5 @@ export default async function MoviePage({
         </div>
       </div>
     </div>
-  );
+  )
 }

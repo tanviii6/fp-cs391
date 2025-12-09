@@ -1,3 +1,6 @@
+/*
+  Created By: Tanvi Agarwal
+*/
 import { NextResponse } from "next/server";
 import { getUsersCollection } from "@/db";
 

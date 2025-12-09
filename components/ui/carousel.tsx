@@ -61,8 +61,12 @@ export function Carousel({
     setApi?.(api)
     update()
     // Keep controls in sync as the carousel reinitializes or selection changes.
-    api.on("select", update).on("reInit", update)
-    return () => api.off("select", update)
+    api.on("select", update)
+    api.on("reInit", update)
+    return () => {
+      api.off("select", update)
+      api.off("reInit", update)
+    }
   }, [api, update, setApi])
 
   // Allow keyboard arrows to move the carousel when focused.

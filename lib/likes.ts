@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 "use server";
 
 import { getLikesCollection } from "@/db";
@@ -8,7 +12,7 @@ const LIKES_COLLECTION = await getLikesCollection();
 // checks if a film is liked by a user
 export async function isFilmLiked(
   filmId: string,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   const likedFilm = await LIKES_COLLECTION.findOne({
     filmId: new ObjectId(filmId),

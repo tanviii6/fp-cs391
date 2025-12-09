@@ -1,3 +1,7 @@
+/*
+  Created By: Tanvi Agarwal
+*/
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { getUsersCollection } from "@/db";

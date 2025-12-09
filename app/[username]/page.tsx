@@ -51,7 +51,8 @@ export default async function ProfilePage({
   // grabs total count of all watched films for the current year
   const currentYear = new Date().getFullYear();
   const filmsThisYear = await watchedCollection.countDocuments({
-    watchedDate: {
+    userId: user._id,
+    loggedAt: {
       $gte: new Date(currentYear, 0, 1), // Jan 1 (current year)
       $lt: new Date(currentYear + 1, 0, 1), // Jan 1 (next year)
     },

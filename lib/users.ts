@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 import { getUsersCollection } from "@/db";
 import { User } from "@/types/schemas";
 

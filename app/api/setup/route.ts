@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez & Tanvi Agarwal
+*/
+
 import { NextResponse } from "next/server";
 import { getUsersCollection } from "@/db";
 import { ObjectId } from "mongodb";

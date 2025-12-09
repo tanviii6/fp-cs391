@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 import { ObjectId, Document, Collection } from "mongodb";
 
 // MONGODB SCHEMAS

@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 import Image from "next/image";
 import { Trash } from "lucide-react";
 import Link from "next/link";

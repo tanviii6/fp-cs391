@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 import { MongoClient, Db, Collection } from "mongodb";
 import { User, Film, Watched, Like, List, Collections } from "@/types/schemas";
 

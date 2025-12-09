@@ -104,7 +104,7 @@ export async function GET(req: Request) {
 
     const films = await filmsCollection
       .find({ _id: { $in: filmIds } })
-      .project({ title: 1, posterUrl: 1, releaseYear: 1, averageRating: 1 })
+      .project({ title: 1, posterUrl: 1, releaseYear: 1, averageRating: 1, tmdbId: 1 })
       .toArray();
 
     return NextResponse.json({ films });

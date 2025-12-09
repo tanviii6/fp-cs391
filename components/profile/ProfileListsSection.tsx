@@ -1,28 +1,25 @@
+/*
+  Created By: Christian Gonzalez & Tanvi Agarwal
+*/
+
 import { List, SerializedUser } from "@/types/schemas";
 import Link from "next/link";
 import UserListsDisplay from "@/components/profile/lists/UserListsDisplay";
 import { Button } from "../ui/button";
-
-
+import { getUserLists } from "@/lib/lists";
 
 interface ProfileListsSectionProps {
   user: SerializedUser;
-  lists?: List[]; // nullable until we are using real data
+  lists?: List[];
   owner: boolean; // this owner flag will let us know if the logged in user owns this account
 }
 
 export default async function ProfileListsSection({
   user,
-  lists,
   owner,
 }: ProfileListsSectionProps) {
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/lists?username=${user.username}`,
-    { cache: "no-store" }
-  );
-  const data = await res.json()
-  const hasLists = Array.isArray(data?.lists) && data.lists.length > 0;
+  const listsData = await getUserLists(user.username!);
+  const hasLists = Array.isArray(listsData) && listsData.length > 0;
 
   return (
     <section>
@@ -67,7 +64,7 @@ export default async function ProfileListsSection({
             )}
           </div>
 
-          <UserListsDisplay username={user.username} />
+          <UserListsDisplay username={user.username!} />
         </section>
       )}
     </section>

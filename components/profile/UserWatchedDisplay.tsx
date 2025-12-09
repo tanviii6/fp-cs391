@@ -1,7 +1,15 @@
+/*
+  Created By: Tanvi Agarwal
+*/
 
-import { getWatchedCollection, getFilmsCollection, getUsersCollection } from "@/db";
+import {
+  getWatchedCollection,
+  getFilmsCollection,
+  getUsersCollection,
+} from "@/db";
 import MovieCard from "@/components/home/MovieCard";
 import { ObjectId } from "mongodb";
+import { Film } from "@/types/schemas";
 
 interface UserWatchedDisplayProps {
   username: string;
@@ -52,10 +60,10 @@ export default async function UserWatchedDisplay({
       </div>
 
       <div className="flex overflow-x-auto space-x-4 pb-3 scrollbar-thin scrollbar-thumb-[#345] scrollbar-track-transparent">
-        {movies.map((movie: any) => (
-          <div key={movie._id.toString()} className="flex-shrink-0 w-[176px]">
+        {movies.map((movie: Film) => (
+          <div key={movie._id?.toString()} className="flex-shrink-0 w-[176px]">
             <MovieCard
-              id={movie._id.toString().length}
+              id={movie.tmdbId!}
               poster_path={movie.posterUrl ?? null}
               title={movie.title}
               average_rating={movie.averageRating ?? 0}

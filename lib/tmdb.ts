@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 "use server";
 
 import {
@@ -50,6 +54,10 @@ export async function searchMovies(
     `/search/movie?query=${encodedQuery}&language=${language}&page=${page}`,
   );
 }
+
+/*
+  Created By: Ron Bajrami and Jude Hosmer
+*/
 
 // gets the movie details using the ID
 export async function getMovieDetails(

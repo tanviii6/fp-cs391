@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez
+*/
+
 "use server";
 
 import { getFilmsCollection } from "@/db";
@@ -20,12 +24,15 @@ export async function addFilm(film: Film): Promise<void> {
   }
 }
 
+// retrieves a film from our FILMS_COLLECTION via a tmdbId
 export async function getFilmByTmdbId(tmdbId: number): Promise<Film | null> {
-  return await FILMS_COLLECTION.findOne({ tmdbId });
+  return await FILMS_COLLECTION.findOne({ tmdbId: tmdbId });
 }
 
+// this function will return a film either from our db or by inserting a newFilm
+// into our db and returning this new object.
 export async function getOrCreateFilmFromTmdb(
-  tmdbId: number
+  tmdbId: number,
 ): Promise<SerializedFilm | null> {
   // check if film already exists
   const film = await getFilmByTmdbId(tmdbId);
@@ -65,6 +72,7 @@ export async function getOrCreateFilmFromTmdb(
     totalRatings: movieDetails.vote_count,
   };
 
+  // call then retrieve our new film
   await addFilm(newFilm);
   const createdFilm = await getFilmByTmdbId(tmdbId);
 

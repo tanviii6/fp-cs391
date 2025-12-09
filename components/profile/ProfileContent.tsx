@@ -1,3 +1,7 @@
+/*
+  Created By: Christian Gonzalez & Tanvi Agarwal
+*/
+
 import {
   getFilmsCollection,
   getListCollection,
@@ -40,12 +44,12 @@ export default async function ProfileContent({ user }: ProfileContentProps) {
       : [];
   const newestList = await listsCollection.findOne(
     { userId: new ObjectId(user._id) },
-    { sort: { createdAt: -1 } }
+    { sort: { createdAt: -1 } },
   );
 
   const newestWatched = await watchedCollection.findOne(
     { userId: new ObjectId(user._id) },
-    { sort: { loggedAt: -1 } }
+    { sort: { loggedAt: -1 } },
   );
 
   const newestWatchedFilm = newestWatched
@@ -87,6 +91,7 @@ export default async function ProfileContent({ user }: ProfileContentProps) {
             </div>
           )}
 
+          {/* Dialog container added by Christian Gonzalez  */}
           {favoriteFilms.length < 4 && (
             <Dialog>
               {favoriteFilms.length === 0 ? (

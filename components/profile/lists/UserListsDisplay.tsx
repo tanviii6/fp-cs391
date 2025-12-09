@@ -1,18 +1,23 @@
-//this is used to display the existing list on profiles page as a horozontally scrollable section per list 
+/*
+  Created By: Tanvi Agarwal
+*/
+
+//this is used to display the existing list on profiles page as a horozontally scrollable section per list
 import { getUserLists } from "@/lib/lists";
 import { getFilmsCollection } from "@/db";
-import MovieCard from "@/components/home/MovieCard"; 
+import MovieCard from "@/components/home/MovieCard";
 import { ObjectId } from "mongodb";
+import { Film } from "@/types/schemas";
 
 interface UserListsDisplayProps {
   username: string;
   limit?: number;
 }
 
-
 // we needed a component which runs on the server and fetches data directly
 export default async function UserListsDisplay({
-  username, limit
+  username,
+  limit,
 }: UserListsDisplayProps) {
   const lists = await getUserLists(username);
   const limitedLists = limit ? lists.slice(0, limit) : lists;
@@ -27,7 +32,7 @@ export default async function UserListsDisplay({
         })
         .toArray();
       return { ...list, movies };
-    })
+    }),
   );
 
   if (listsWithMovies.length === 0) {
@@ -50,9 +55,7 @@ export default async function UserListsDisplay({
         <div key={list._id.toString()}>
           <div className="flex justify-between items-end mb-2">
             <div>
-              <h2 className="text-xl font-semibold text-white">
-                {list.title}
-              </h2>
+              <h2 className="text-xl font-semibold text-white">{list.title}</h2>
               {list.description && (
                 <p className="text-sm text-[#89a]">{list.description}</p>
               )}
@@ -63,13 +66,13 @@ export default async function UserListsDisplay({
             {list.movies.length === 0 ? (
               <p className="text-[#678]">No films added yet.</p>
             ) : (
-              list.movies.map((movie: any) => (
+              list.movies.map((movie: Film) => (
                 <div
-                  key={movie._id.toString()}
+                  key={movie._id?.toString()}
                   className="flex-shrink-0 w-[160px]"
                 >
                   <MovieCard
-                    id={movie._id.toString().length} 
+                    id={movie.tmdbId!}
                     poster_path={movie.posterUrl || null}
                     title={movie.title}
                     average_rating={movie.averageRating || 0}
